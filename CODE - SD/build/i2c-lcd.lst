@@ -1,0 +1,575 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"i2c-lcd.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.lcd_send_cmd,"ax",%progbits
+  16              		.align	1
+  17              		.global	lcd_send_cmd
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	lcd_send_cmd:
+  25              	.LVL0:
+  26              	.LFB65:
+  27              		.file 1 "Src/i2c-lcd.c"
+   1:Src/i2c-lcd.c **** /** 
+   2:Src/i2c-lcd.c **** Edit by modify: Ngoc Hang 
+   3:Src/i2c-lcd.c **** **/
+   4:Src/i2c-lcd.c **** 
+   5:Src/i2c-lcd.c **** #include "i2c-lcd.h"
+   6:Src/i2c-lcd.c **** extern I2C_HandleTypeDef hi2c1;  // change your handler here accordingly
+   7:Src/i2c-lcd.c **** 
+   8:Src/i2c-lcd.c **** #define SLAVE_ADDRESS_LCD 0x4E // change this according to ur setup
+   9:Src/i2c-lcd.c **** 
+  10:Src/i2c-lcd.c **** void lcd_send_cmd (char cmd)
+  11:Src/i2c-lcd.c **** {
+  28              		.loc 1 11 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 11 1 is_stmt 0 view .LVU1
+  33 0000 00B5     		push	{lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 14, -4
+  37 0002 85B0     		sub	sp, sp, #20
+  38              	.LCFI1:
+  39              		.cfi_def_cfa_offset 24
+  12:Src/i2c-lcd.c **** 	char data_u, data_l;
+  40              		.loc 1 12 2 is_stmt 1 view .LVU2
+  13:Src/i2c-lcd.c **** 	uint8_t data_t[4];
+  41              		.loc 1 13 2 view .LVU3
+  14:Src/i2c-lcd.c **** 	data_u = (cmd&0xf0);
+  42              		.loc 1 14 2 view .LVU4
+  43              		.loc 1 14 9 is_stmt 0 view .LVU5
+  44 0004 00F0F003 		and	r3, r0, #240
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 2
+
+
+  45              	.LVL1:
+  15:Src/i2c-lcd.c **** 	data_l = ((cmd<<4)&0xf0);
+  46              		.loc 1 15 2 is_stmt 1 view .LVU6
+  47              		.loc 1 15 16 is_stmt 0 view .LVU7
+  48 0008 0001     		lsls	r0, r0, #4
+  49              	.LVL2:
+  50              		.loc 1 15 9 view .LVU8
+  51 000a C0B2     		uxtb	r0, r0
+  52              	.LVL3:
+  16:Src/i2c-lcd.c **** 	data_t[0] = data_u|0x0C;  //en=1, rs=0
+  53              		.loc 1 16 2 is_stmt 1 view .LVU9
+  54              		.loc 1 16 12 is_stmt 0 view .LVU10
+  55 000c 43F00C02 		orr	r2, r3, #12
+  56 0010 8DF80C20 		strb	r2, [sp, #12]
+  17:Src/i2c-lcd.c **** 	data_t[1] = data_u|0x08;  //en=0, rs=0
+  57              		.loc 1 17 2 is_stmt 1 view .LVU11
+  58              		.loc 1 17 12 is_stmt 0 view .LVU12
+  59 0014 43F00803 		orr	r3, r3, #8
+  60              	.LVL4:
+  61              		.loc 1 17 12 view .LVU13
+  62 0018 8DF80D30 		strb	r3, [sp, #13]
+  18:Src/i2c-lcd.c **** 	data_t[2] = data_l|0x0C;  //en=1, rs=0
+  63              		.loc 1 18 2 is_stmt 1 view .LVU14
+  64              		.loc 1 18 12 is_stmt 0 view .LVU15
+  65 001c 40F00C03 		orr	r3, r0, #12
+  66 0020 8DF80E30 		strb	r3, [sp, #14]
+  19:Src/i2c-lcd.c **** 	data_t[3] = data_l|0x08;  //en=0, rs=0
+  67              		.loc 1 19 2 is_stmt 1 view .LVU16
+  68              		.loc 1 19 12 is_stmt 0 view .LVU17
+  69 0024 40F00800 		orr	r0, r0, #8
+  70              	.LVL5:
+  71              		.loc 1 19 12 view .LVU18
+  72 0028 8DF80F00 		strb	r0, [sp, #15]
+  20:Src/i2c-lcd.c **** 	HAL_I2C_Master_Transmit (&hi2c1, SLAVE_ADDRESS_LCD,(uint8_t *) data_t, 4, 100);
+  73              		.loc 1 20 2 is_stmt 1 view .LVU19
+  74 002c 6423     		movs	r3, #100
+  75 002e 0093     		str	r3, [sp]
+  76 0030 0423     		movs	r3, #4
+  77 0032 03AA     		add	r2, sp, #12
+  78 0034 4E21     		movs	r1, #78
+  79 0036 0348     		ldr	r0, .L3
+  80 0038 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+  81              	.LVL6:
+  21:Src/i2c-lcd.c **** }
+  82              		.loc 1 21 1 is_stmt 0 view .LVU20
+  83 003c 05B0     		add	sp, sp, #20
+  84              	.LCFI2:
+  85              		.cfi_def_cfa_offset 4
+  86              		@ sp needed
+  87 003e 5DF804FB 		ldr	pc, [sp], #4
+  88              	.L4:
+  89 0042 00BF     		.align	2
+  90              	.L3:
+  91 0044 00000000 		.word	hi2c1
+  92              		.cfi_endproc
+  93              	.LFE65:
+  95              		.section	.text.lcd_send_data,"ax",%progbits
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 3
+
+
+  96              		.align	1
+  97              		.global	lcd_send_data
+  98              		.syntax unified
+  99              		.thumb
+ 100              		.thumb_func
+ 101              		.fpu softvfp
+ 103              	lcd_send_data:
+ 104              	.LVL7:
+ 105              	.LFB66:
+  22:Src/i2c-lcd.c **** 
+  23:Src/i2c-lcd.c **** void lcd_send_data (char data)
+  24:Src/i2c-lcd.c **** {
+ 106              		.loc 1 24 1 is_stmt 1 view -0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 8
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110              		.loc 1 24 1 is_stmt 0 view .LVU22
+ 111 0000 00B5     		push	{lr}
+ 112              	.LCFI3:
+ 113              		.cfi_def_cfa_offset 4
+ 114              		.cfi_offset 14, -4
+ 115 0002 85B0     		sub	sp, sp, #20
+ 116              	.LCFI4:
+ 117              		.cfi_def_cfa_offset 24
+  25:Src/i2c-lcd.c **** 	char data_u, data_l;
+ 118              		.loc 1 25 2 is_stmt 1 view .LVU23
+  26:Src/i2c-lcd.c **** 	uint8_t data_t[4];
+ 119              		.loc 1 26 2 view .LVU24
+  27:Src/i2c-lcd.c **** 	data_u = (data&0xf0);
+ 120              		.loc 1 27 2 view .LVU25
+ 121              		.loc 1 27 9 is_stmt 0 view .LVU26
+ 122 0004 00F0F003 		and	r3, r0, #240
+ 123              	.LVL8:
+  28:Src/i2c-lcd.c **** 	data_l = ((data<<4)&0xf0);
+ 124              		.loc 1 28 2 is_stmt 1 view .LVU27
+ 125              		.loc 1 28 17 is_stmt 0 view .LVU28
+ 126 0008 0001     		lsls	r0, r0, #4
+ 127              	.LVL9:
+ 128              		.loc 1 28 9 view .LVU29
+ 129 000a C0B2     		uxtb	r0, r0
+ 130              	.LVL10:
+  29:Src/i2c-lcd.c **** 	data_t[0] = data_u|0x0D;  //en=1, rs=0
+ 131              		.loc 1 29 2 is_stmt 1 view .LVU30
+ 132              		.loc 1 29 12 is_stmt 0 view .LVU31
+ 133 000c 43F00D02 		orr	r2, r3, #13
+ 134 0010 8DF80C20 		strb	r2, [sp, #12]
+  30:Src/i2c-lcd.c **** 	data_t[1] = data_u|0x09;  //en=0, rs=0
+ 135              		.loc 1 30 2 is_stmt 1 view .LVU32
+ 136              		.loc 1 30 12 is_stmt 0 view .LVU33
+ 137 0014 43F00903 		orr	r3, r3, #9
+ 138              	.LVL11:
+ 139              		.loc 1 30 12 view .LVU34
+ 140 0018 8DF80D30 		strb	r3, [sp, #13]
+  31:Src/i2c-lcd.c **** 	data_t[2] = data_l|0x0D;  //en=1, rs=0
+ 141              		.loc 1 31 2 is_stmt 1 view .LVU35
+ 142              		.loc 1 31 12 is_stmt 0 view .LVU36
+ 143 001c 40F00D03 		orr	r3, r0, #13
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 4
+
+
+ 144 0020 8DF80E30 		strb	r3, [sp, #14]
+  32:Src/i2c-lcd.c **** 	data_t[3] = data_l|0x09;  //en=0, rs=0
+ 145              		.loc 1 32 2 is_stmt 1 view .LVU37
+ 146              		.loc 1 32 12 is_stmt 0 view .LVU38
+ 147 0024 40F00900 		orr	r0, r0, #9
+ 148              	.LVL12:
+ 149              		.loc 1 32 12 view .LVU39
+ 150 0028 8DF80F00 		strb	r0, [sp, #15]
+  33:Src/i2c-lcd.c **** 	HAL_I2C_Master_Transmit (&hi2c1, SLAVE_ADDRESS_LCD,(uint8_t *) data_t, 4, 100);
+ 151              		.loc 1 33 2 is_stmt 1 view .LVU40
+ 152 002c 6423     		movs	r3, #100
+ 153 002e 0093     		str	r3, [sp]
+ 154 0030 0423     		movs	r3, #4
+ 155 0032 03AA     		add	r2, sp, #12
+ 156 0034 4E21     		movs	r1, #78
+ 157 0036 0348     		ldr	r0, .L7
+ 158 0038 FFF7FEFF 		bl	HAL_I2C_Master_Transmit
+ 159              	.LVL13:
+  34:Src/i2c-lcd.c **** }
+ 160              		.loc 1 34 1 is_stmt 0 view .LVU41
+ 161 003c 05B0     		add	sp, sp, #20
+ 162              	.LCFI5:
+ 163              		.cfi_def_cfa_offset 4
+ 164              		@ sp needed
+ 165 003e 5DF804FB 		ldr	pc, [sp], #4
+ 166              	.L8:
+ 167 0042 00BF     		.align	2
+ 168              	.L7:
+ 169 0044 00000000 		.word	hi2c1
+ 170              		.cfi_endproc
+ 171              	.LFE66:
+ 173              		.section	.text.lcd_init,"ax",%progbits
+ 174              		.align	1
+ 175              		.global	lcd_init
+ 176              		.syntax unified
+ 177              		.thumb
+ 178              		.thumb_func
+ 179              		.fpu softvfp
+ 181              	lcd_init:
+ 182              	.LFB67:
+  35:Src/i2c-lcd.c **** 
+  36:Src/i2c-lcd.c **** void lcd_init (void)
+  37:Src/i2c-lcd.c **** {
+ 183              		.loc 1 37 1 is_stmt 1 view -0
+ 184              		.cfi_startproc
+ 185              		@ args = 0, pretend = 0, frame = 0
+ 186              		@ frame_needed = 0, uses_anonymous_args = 0
+ 187 0000 08B5     		push	{r3, lr}
+ 188              	.LCFI6:
+ 189              		.cfi_def_cfa_offset 8
+ 190              		.cfi_offset 3, -8
+ 191              		.cfi_offset 14, -4
+  38:Src/i2c-lcd.c **** 	lcd_send_cmd (0x33); /* set 4-bits interface */
+ 192              		.loc 1 38 2 view .LVU43
+ 193 0002 3320     		movs	r0, #51
+ 194 0004 FFF7FEFF 		bl	lcd_send_cmd
+ 195              	.LVL14:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 5
+
+
+  39:Src/i2c-lcd.c **** 	lcd_send_cmd (0x32);
+ 196              		.loc 1 39 2 view .LVU44
+ 197 0008 3220     		movs	r0, #50
+ 198 000a FFF7FEFF 		bl	lcd_send_cmd
+ 199              	.LVL15:
+  40:Src/i2c-lcd.c **** 	HAL_Delay(50);
+ 200              		.loc 1 40 2 view .LVU45
+ 201 000e 3220     		movs	r0, #50
+ 202 0010 FFF7FEFF 		bl	HAL_Delay
+ 203              	.LVL16:
+  41:Src/i2c-lcd.c **** 	lcd_send_cmd (0x28); /* start to set LCD function */
+ 204              		.loc 1 41 2 view .LVU46
+ 205 0014 2820     		movs	r0, #40
+ 206 0016 FFF7FEFF 		bl	lcd_send_cmd
+ 207              	.LVL17:
+  42:Src/i2c-lcd.c **** 	HAL_Delay(50);
+ 208              		.loc 1 42 2 view .LVU47
+ 209 001a 3220     		movs	r0, #50
+ 210 001c FFF7FEFF 		bl	HAL_Delay
+ 211              	.LVL18:
+  43:Src/i2c-lcd.c **** 	lcd_send_cmd (0x01); /* clear display */
+ 212              		.loc 1 43 2 view .LVU48
+ 213 0020 0120     		movs	r0, #1
+ 214 0022 FFF7FEFF 		bl	lcd_send_cmd
+ 215              	.LVL19:
+  44:Src/i2c-lcd.c **** 	HAL_Delay(50);
+ 216              		.loc 1 44 2 view .LVU49
+ 217 0026 3220     		movs	r0, #50
+ 218 0028 FFF7FEFF 		bl	HAL_Delay
+ 219              	.LVL20:
+  45:Src/i2c-lcd.c **** 	lcd_send_cmd (0x06); /* set entry mode */
+ 220              		.loc 1 45 2 view .LVU50
+ 221 002c 0620     		movs	r0, #6
+ 222 002e FFF7FEFF 		bl	lcd_send_cmd
+ 223              	.LVL21:
+  46:Src/i2c-lcd.c **** 	HAL_Delay(50);
+ 224              		.loc 1 46 2 view .LVU51
+ 225 0032 3220     		movs	r0, #50
+ 226 0034 FFF7FEFF 		bl	HAL_Delay
+ 227              	.LVL22:
+  47:Src/i2c-lcd.c **** 	lcd_send_cmd (0x0c); /* set display to on */	
+ 228              		.loc 1 47 2 view .LVU52
+ 229 0038 0C20     		movs	r0, #12
+ 230 003a FFF7FEFF 		bl	lcd_send_cmd
+ 231              	.LVL23:
+  48:Src/i2c-lcd.c **** 	HAL_Delay(50);
+ 232              		.loc 1 48 2 view .LVU53
+ 233 003e 3220     		movs	r0, #50
+ 234 0040 FFF7FEFF 		bl	HAL_Delay
+ 235              	.LVL24:
+  49:Src/i2c-lcd.c **** 	lcd_send_cmd (0x02); /* move cursor to home and set data address to 0 */
+ 236              		.loc 1 49 2 view .LVU54
+ 237 0044 0220     		movs	r0, #2
+ 238 0046 FFF7FEFF 		bl	lcd_send_cmd
+ 239              	.LVL25:
+  50:Src/i2c-lcd.c **** 	HAL_Delay(50);
+ 240              		.loc 1 50 2 view .LVU55
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 6
+
+
+ 241 004a 3220     		movs	r0, #50
+ 242 004c FFF7FEFF 		bl	HAL_Delay
+ 243              	.LVL26:
+  51:Src/i2c-lcd.c **** 	lcd_send_cmd (0x80);
+ 244              		.loc 1 51 2 view .LVU56
+ 245 0050 8020     		movs	r0, #128
+ 246 0052 FFF7FEFF 		bl	lcd_send_cmd
+ 247              	.LVL27:
+  52:Src/i2c-lcd.c **** }
+ 248              		.loc 1 52 1 is_stmt 0 view .LVU57
+ 249 0056 08BD     		pop	{r3, pc}
+ 250              		.cfi_endproc
+ 251              	.LFE67:
+ 253              		.section	.text.lcd_send_string,"ax",%progbits
+ 254              		.align	1
+ 255              		.global	lcd_send_string
+ 256              		.syntax unified
+ 257              		.thumb
+ 258              		.thumb_func
+ 259              		.fpu softvfp
+ 261              	lcd_send_string:
+ 262              	.LVL28:
+ 263              	.LFB68:
+  53:Src/i2c-lcd.c **** 
+  54:Src/i2c-lcd.c **** void lcd_send_string (char *str)
+  55:Src/i2c-lcd.c **** {
+ 264              		.loc 1 55 1 is_stmt 1 view -0
+ 265              		.cfi_startproc
+ 266              		@ args = 0, pretend = 0, frame = 0
+ 267              		@ frame_needed = 0, uses_anonymous_args = 0
+ 268              		.loc 1 55 1 is_stmt 0 view .LVU59
+ 269 0000 10B5     		push	{r4, lr}
+ 270              	.LCFI7:
+ 271              		.cfi_def_cfa_offset 8
+ 272              		.cfi_offset 4, -8
+ 273              		.cfi_offset 14, -4
+ 274 0002 0446     		mov	r4, r0
+  56:Src/i2c-lcd.c **** 	while (*str) lcd_send_data (*str++);
+ 275              		.loc 1 56 2 is_stmt 1 view .LVU60
+ 276              		.loc 1 56 8 is_stmt 0 view .LVU61
+ 277 0004 02E0     		b	.L12
+ 278              	.LVL29:
+ 279              	.L13:
+ 280              		.loc 1 56 15 is_stmt 1 discriminator 2 view .LVU62
+ 281              		.loc 1 56 34 is_stmt 0 discriminator 2 view .LVU63
+ 282 0006 0134     		adds	r4, r4, #1
+ 283              	.LVL30:
+ 284              		.loc 1 56 15 discriminator 2 view .LVU64
+ 285 0008 FFF7FEFF 		bl	lcd_send_data
+ 286              	.LVL31:
+ 287              	.L12:
+ 288              		.loc 1 56 8 is_stmt 1 discriminator 1 view .LVU65
+ 289              		.loc 1 56 9 is_stmt 0 discriminator 1 view .LVU66
+ 290 000c 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 291              		.loc 1 56 8 discriminator 1 view .LVU67
+ 292 000e 0028     		cmp	r0, #0
+ 293 0010 F9D1     		bne	.L13
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 7
+
+
+  57:Src/i2c-lcd.c **** }
+ 294              		.loc 1 57 1 view .LVU68
+ 295 0012 10BD     		pop	{r4, pc}
+ 296              		.loc 1 57 1 view .LVU69
+ 297              		.cfi_endproc
+ 298              	.LFE68:
+ 300              		.section	.text.lcd_clear_display,"ax",%progbits
+ 301              		.align	1
+ 302              		.global	lcd_clear_display
+ 303              		.syntax unified
+ 304              		.thumb
+ 305              		.thumb_func
+ 306              		.fpu softvfp
+ 308              	lcd_clear_display:
+ 309              	.LFB69:
+  58:Src/i2c-lcd.c **** 
+  59:Src/i2c-lcd.c **** void lcd_clear_display (void)
+  60:Src/i2c-lcd.c **** {
+ 310              		.loc 1 60 1 is_stmt 1 view -0
+ 311              		.cfi_startproc
+ 312              		@ args = 0, pretend = 0, frame = 0
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+ 314 0000 08B5     		push	{r3, lr}
+ 315              	.LCFI8:
+ 316              		.cfi_def_cfa_offset 8
+ 317              		.cfi_offset 3, -8
+ 318              		.cfi_offset 14, -4
+  61:Src/i2c-lcd.c **** 	lcd_send_cmd (0x01); //clear display
+ 319              		.loc 1 61 2 view .LVU71
+ 320 0002 0120     		movs	r0, #1
+ 321 0004 FFF7FEFF 		bl	lcd_send_cmd
+ 322              	.LVL32:
+  62:Src/i2c-lcd.c **** }
+ 323              		.loc 1 62 1 is_stmt 0 view .LVU72
+ 324 0008 08BD     		pop	{r3, pc}
+ 325              		.cfi_endproc
+ 326              	.LFE69:
+ 328              		.section	.text.lcd_goto_XY,"ax",%progbits
+ 329              		.align	1
+ 330              		.global	lcd_goto_XY
+ 331              		.syntax unified
+ 332              		.thumb
+ 333              		.thumb_func
+ 334              		.fpu softvfp
+ 336              	lcd_goto_XY:
+ 337              	.LVL33:
+ 338              	.LFB70:
+  63:Src/i2c-lcd.c **** 
+  64:Src/i2c-lcd.c **** void lcd_goto_XY (int row, int col)
+  65:Src/i2c-lcd.c **** {
+ 339              		.loc 1 65 1 is_stmt 1 view -0
+ 340              		.cfi_startproc
+ 341              		@ args = 0, pretend = 0, frame = 0
+ 342              		@ frame_needed = 0, uses_anonymous_args = 0
+ 343              		.loc 1 65 1 is_stmt 0 view .LVU74
+ 344 0000 08B5     		push	{r3, lr}
+ 345              	.LCFI9:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 8
+
+
+ 346              		.cfi_def_cfa_offset 8
+ 347              		.cfi_offset 3, -8
+ 348              		.cfi_offset 14, -4
+ 349 0002 0346     		mov	r3, r0
+  66:Src/i2c-lcd.c **** 	uint8_t pos_Addr;
+ 350              		.loc 1 66 2 is_stmt 1 view .LVU75
+  67:Src/i2c-lcd.c **** 	if(row == 1) 
+ 351              		.loc 1 67 2 view .LVU76
+ 352              		.loc 1 67 4 is_stmt 0 view .LVU77
+ 353 0004 0128     		cmp	r0, #1
+ 354 0006 0DD0     		beq	.L23
+ 355 0008 0020     		movs	r0, #0
+ 356              	.LVL34:
+  68:Src/i2c-lcd.c **** 	{
+  69:Src/i2c-lcd.c **** 		pos_Addr = 0x80 + row - 1 + col;
+  70:Src/i2c-lcd.c **** 	}
+  71:Src/i2c-lcd.c **** 	else if (row == 2)
+ 357              		.loc 1 71 7 is_stmt 1 view .LVU78
+ 358              		.loc 1 71 10 is_stmt 0 view .LVU79
+ 359 000a 022B     		cmp	r3, #2
+ 360 000c 11D0     		beq	.L24
+  72:Src/i2c-lcd.c **** 	{
+  73:Src/i2c-lcd.c **** 		pos_Addr = 0x80 | (0x40 + col);
+  74:Src/i2c-lcd.c **** 	}
+  75:Src/i2c-lcd.c **** 	else if (row == 3)
+ 361              		.loc 1 75 7 is_stmt 1 view .LVU80
+ 362              		.loc 1 75 10 is_stmt 0 view .LVU81
+ 363 000e 032B     		cmp	r3, #3
+ 364 0010 16D0     		beq	.L25
+  76:Src/i2c-lcd.c **** 	{
+  77:Src/i2c-lcd.c **** 		pos_Addr = 0x80 | (0x14 + col);
+  78:Src/i2c-lcd.c **** 	}
+  79:Src/i2c-lcd.c **** 	else if (row == 4)
+ 365              		.loc 1 79 7 is_stmt 1 view .LVU82
+ 366              		.loc 1 79 10 is_stmt 0 view .LVU83
+ 367 0012 042B     		cmp	r3, #4
+ 368 0014 0AD1     		bne	.L19
+  80:Src/i2c-lcd.c **** 	{
+  81:Src/i2c-lcd.c **** 		pos_Addr = 0x80 | (0x54 + col);
+ 369              		.loc 1 81 3 is_stmt 1 view .LVU84
+ 370              		.loc 1 81 27 is_stmt 0 view .LVU85
+ 371 0016 01F15400 		add	r0, r1, #84
+ 372 001a 40B2     		sxtb	r0, r0
+ 373              		.loc 1 81 19 view .LVU86
+ 374 001c 60F07F00 		orn	r0, r0, #127
+ 375              		.loc 1 81 12 view .LVU87
+ 376 0020 C0B2     		uxtb	r0, r0
+ 377              	.LVL35:
+ 378              		.loc 1 81 12 view .LVU88
+ 379 0022 03E0     		b	.L19
+ 380              	.LVL36:
+ 381              	.L23:
+  69:Src/i2c-lcd.c **** 	}
+ 382              		.loc 1 69 3 is_stmt 1 view .LVU89
+  69:Src/i2c-lcd.c **** 	}
+ 383              		.loc 1 69 29 is_stmt 0 view .LVU90
+ 384 0024 0844     		add	r0, r0, r1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 9
+
+
+ 385              	.LVL37:
+  69:Src/i2c-lcd.c **** 	}
+ 386              		.loc 1 69 29 view .LVU91
+ 387 0026 C0B2     		uxtb	r0, r0
+  69:Src/i2c-lcd.c **** 	}
+ 388              		.loc 1 69 12 view .LVU92
+ 389 0028 7F30     		adds	r0, r0, #127
+ 390 002a C0B2     		uxtb	r0, r0
+ 391              	.LVL38:
+ 392              	.L19:
+  82:Src/i2c-lcd.c **** 	}
+  83:Src/i2c-lcd.c **** 	lcd_send_cmd(pos_Addr);
+ 393              		.loc 1 83 2 is_stmt 1 view .LVU93
+ 394 002c FFF7FEFF 		bl	lcd_send_cmd
+ 395              	.LVL39:
+  84:Src/i2c-lcd.c **** }
+ 396              		.loc 1 84 1 is_stmt 0 view .LVU94
+ 397 0030 08BD     		pop	{r3, pc}
+ 398              	.LVL40:
+ 399              	.L24:
+  73:Src/i2c-lcd.c **** 	}
+ 400              		.loc 1 73 3 is_stmt 1 view .LVU95
+  73:Src/i2c-lcd.c **** 	}
+ 401              		.loc 1 73 27 is_stmt 0 view .LVU96
+ 402 0032 01F14000 		add	r0, r1, #64
+ 403 0036 40B2     		sxtb	r0, r0
+  73:Src/i2c-lcd.c **** 	}
+ 404              		.loc 1 73 19 view .LVU97
+ 405 0038 60F07F00 		orn	r0, r0, #127
+  73:Src/i2c-lcd.c **** 	}
+ 406              		.loc 1 73 12 view .LVU98
+ 407 003c C0B2     		uxtb	r0, r0
+ 408              	.LVL41:
+  73:Src/i2c-lcd.c **** 	}
+ 409              		.loc 1 73 12 view .LVU99
+ 410 003e F5E7     		b	.L19
+ 411              	.LVL42:
+ 412              	.L25:
+  77:Src/i2c-lcd.c **** 	}
+ 413              		.loc 1 77 3 is_stmt 1 view .LVU100
+  77:Src/i2c-lcd.c **** 	}
+ 414              		.loc 1 77 27 is_stmt 0 view .LVU101
+ 415 0040 01F11400 		add	r0, r1, #20
+ 416 0044 40B2     		sxtb	r0, r0
+  77:Src/i2c-lcd.c **** 	}
+ 417              		.loc 1 77 19 view .LVU102
+ 418 0046 60F07F00 		orn	r0, r0, #127
+  77:Src/i2c-lcd.c **** 	}
+ 419              		.loc 1 77 12 view .LVU103
+ 420 004a C0B2     		uxtb	r0, r0
+ 421              	.LVL43:
+  77:Src/i2c-lcd.c **** 	}
+ 422              		.loc 1 77 12 view .LVU104
+ 423 004c EEE7     		b	.L19
+ 424              		.cfi_endproc
+ 425              	.LFE70:
+ 427              		.text
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 10
+
+
+ 428              	.Letext0:
+ 429              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+ 430              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 431              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h"
+ 432              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 433              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 434              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h"
+ 435              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 i2c-lcd.c
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:16     .text.lcd_send_cmd:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:24     .text.lcd_send_cmd:00000000 lcd_send_cmd
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:91     .text.lcd_send_cmd:00000044 $d
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:96     .text.lcd_send_data:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:103    .text.lcd_send_data:00000000 lcd_send_data
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:169    .text.lcd_send_data:00000044 $d
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:174    .text.lcd_init:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:181    .text.lcd_init:00000000 lcd_init
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:254    .text.lcd_send_string:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:261    .text.lcd_send_string:00000000 lcd_send_string
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:301    .text.lcd_clear_display:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:308    .text.lcd_clear_display:00000000 lcd_clear_display
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:329    .text.lcd_goto_XY:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccm82qBH.s:336    .text.lcd_goto_XY:00000000 lcd_goto_XY
+
+UNDEFINED SYMBOLS
+HAL_I2C_Master_Transmit
+hi2c1
+HAL_Delay

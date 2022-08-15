@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "DUST",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Inc",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Core/Include",
+                "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc/",
+                "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F103xE"
+            ],
+            "compilerPath": "${env:ARM_DIR}/arm-none-eabi-gcc.exe",
+            "intelliSenseMode": "gcc-arm",
+            "compilerArgs": [
+                "-mcpu=cortex-m3"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,114 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccG0ucPa.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"delay.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.delay_us,"ax",%progbits
+  16              		.align	1
+  17              		.global	delay_us
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	delay_us:
+  25              	.LVL0:
+  26              	.LFB68:
+  27              		.file 1 "Src/delay.c"
+   1:Src/delay.c   **** /*
+   2:Src/delay.c   ****  * delay.c
+   3:Src/delay.c   ****  *
+   4:Src/delay.c   ****  *  Created on: Dec 6, 2021
+   5:Src/delay.c   ****  *      Author: manht
+   6:Src/delay.c   ****  */
+   7:Src/delay.c   **** #include "delay.h"
+   8:Src/delay.c   **** 
+   9:Src/delay.c   **** extern TIM_HandleTypeDef htim4;
+  10:Src/delay.c   **** void delay_us(uint32_t us){
+  28              		.loc 1 10 27 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 10 27 is_stmt 0 view .LVU1
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+  37              		.cfi_offset 14, -4
+  38 0002 0446     		mov	r4, r0
+  11:Src/delay.c   **** 	__HAL_TIM_SET_COUNTER(&htim4,0);
+  39              		.loc 1 11 2 is_stmt 1 view .LVU2
+  40 0004 0748     		ldr	r0, .L4
+  41              	.LVL1:
+  42              		.loc 1 11 2 is_stmt 0 view .LVU3
+  43 0006 0368     		ldr	r3, [r0]
+  44 0008 0022     		movs	r2, #0
+  45 000a 5A62     		str	r2, [r3, #36]
+  12:Src/delay.c   **** 	HAL_TIM_Base_Start(&htim4);
+  46              		.loc 1 12 2 is_stmt 1 view .LVU4
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccG0ucPa.s 			page 2
+
+
+  47 000c FFF7FEFF 		bl	HAL_TIM_Base_Start
+  48              	.LVL2:
+  13:Src/delay.c   **** 	while(__HAL_TIM_GET_COUNTER(&htim4) < us);
+  49              		.loc 1 13 2 view .LVU5
+  50              	.L2:
+  51              		.loc 1 13 43 discriminator 1 view .LVU6
+  52              		.loc 1 13 7 discriminator 1 view .LVU7
+  53              		.loc 1 13 8 is_stmt 0 discriminator 1 view .LVU8
+  54 0010 044B     		ldr	r3, .L4
+  55 0012 1B68     		ldr	r3, [r3]
+  56 0014 5B6A     		ldr	r3, [r3, #36]
+  57              		.loc 1 13 7 discriminator 1 view .LVU9
+  58 0016 A342     		cmp	r3, r4
+  59 0018 FAD3     		bcc	.L2
+  14:Src/delay.c   **** 	HAL_TIM_Base_Stop(&htim4);
+  60              		.loc 1 14 2 is_stmt 1 view .LVU10
+  61 001a 0248     		ldr	r0, .L4
+  62 001c FFF7FEFF 		bl	HAL_TIM_Base_Stop
+  63              	.LVL3:
+  15:Src/delay.c   **** }
+  64              		.loc 1 15 1 is_stmt 0 view .LVU11
+  65 0020 10BD     		pop	{r4, pc}
+  66              	.LVL4:
+  67              	.L5:
+  68              		.loc 1 15 1 view .LVU12
+  69 0022 00BF     		.align	2
+  70              	.L4:
+  71 0024 00000000 		.word	htim4
+  72              		.cfi_endproc
+  73              	.LFE68:
+  75              		.text
+  76              	.Letext0:
+  77              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+  78              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+  79              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h"
+  80              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+  81              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+  82              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccG0ucPa.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 delay.c
+C:\Users\Vento\AppData\Local\Temp\ccG0ucPa.s:16     .text.delay_us:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccG0ucPa.s:24     .text.delay_us:00000000 delay_us
+C:\Users\Vento\AppData\Local\Temp\ccG0ucPa.s:71     .text.delay_us:00000024 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_Base_Start
+HAL_TIM_Base_Stop
+htim4

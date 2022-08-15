@@ -1,0 +1,397 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"flash.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.Flash_Lock,"ax",%progbits
+  16              		.align	1
+  17              		.global	Flash_Lock
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	Flash_Lock:
+  25              	.LFB68:
+  26              		.file 1 "Src/flash.c"
+   1:Src/flash.c   **** #include <flash.h>
+   2:Src/flash.c   **** #include "stm32f1xx_hal_flash.h"
+   3:Src/flash.c   **** #include "stm32f1xx_hal_flash_ex.h"
+   4:Src/flash.c   **** #include "main.h"
+   5:Src/flash.c   **** 
+   6:Src/flash.c   **** #define FLASH_TYPEERASE_PAGES    0x00U //xóa theo page
+   7:Src/flash.c   **** #define FLASH_TYPEERASE_MASSERASE 0x02U //xóa toàn b? chip
+   8:Src/flash.c   **** FLASH_EraseInitTypeDef EraseInitStruct; // struct c?u hình xóa d? li?u
+   9:Src/flash.c   **** uint16_t lengthPage;
+  10:Src/flash.c   **** uint32_t PAGEError; // bi?n ch?a d?a ch? l?i
+  11:Src/flash.c   **** 
+  12:Src/flash.c   **** void Flash_Lock()
+  13:Src/flash.c   **** {
+  27              		.loc 1 13 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 08B5     		push	{r3, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  14:Src/flash.c   **** 	HAL_FLASH_Lock();
+  36              		.loc 1 14 2 view .LVU1
+  37 0002 FFF7FEFF 		bl	HAL_FLASH_Lock
+  38              	.LVL0:
+  15:Src/flash.c   **** }
+  39              		.loc 1 15 1 is_stmt 0 view .LVU2
+  40 0006 08BD     		pop	{r3, pc}
+  41              		.cfi_endproc
+  42              	.LFE68:
+  44              		.section	.text.Flash_Unlock,"ax",%progbits
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 2
+
+
+  45              		.align	1
+  46              		.global	Flash_Unlock
+  47              		.syntax unified
+  48              		.thumb
+  49              		.thumb_func
+  50              		.fpu softvfp
+  52              	Flash_Unlock:
+  53              	.LFB69:
+  16:Src/flash.c   **** 
+  17:Src/flash.c   **** void Flash_Unlock()
+  18:Src/flash.c   **** {
+  54              		.loc 1 18 1 is_stmt 1 view -0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 0
+  57              		@ frame_needed = 0, uses_anonymous_args = 0
+  58 0000 08B5     		push	{r3, lr}
+  59              	.LCFI1:
+  60              		.cfi_def_cfa_offset 8
+  61              		.cfi_offset 3, -8
+  62              		.cfi_offset 14, -4
+  19:Src/flash.c   **** 	HAL_FLASH_Unlock();
+  63              		.loc 1 19 2 view .LVU4
+  64 0002 FFF7FEFF 		bl	HAL_FLASH_Unlock
+  65              	.LVL1:
+  20:Src/flash.c   **** }
+  66              		.loc 1 20 1 is_stmt 0 view .LVU5
+  67 0006 08BD     		pop	{r3, pc}
+  68              		.cfi_endproc
+  69              	.LFE69:
+  71              		.section	.text.Flash_Erase,"ax",%progbits
+  72              		.align	1
+  73              		.global	Flash_Erase
+  74              		.syntax unified
+  75              		.thumb
+  76              		.thumb_func
+  77              		.fpu softvfp
+  79              	Flash_Erase:
+  80              	.LVL2:
+  81              	.LFB70:
+  21:Src/flash.c   **** 
+  22:Src/flash.c   **** void Flash_Erase(uint32_t addr)
+  23:Src/flash.c   **** {
+  82              		.loc 1 23 1 is_stmt 1 view -0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 0
+  85              		@ frame_needed = 0, uses_anonymous_args = 0
+  86              		.loc 1 23 1 is_stmt 0 view .LVU7
+  87 0000 08B5     		push	{r3, lr}
+  88              	.LCFI2:
+  89              		.cfi_def_cfa_offset 8
+  90              		.cfi_offset 3, -8
+  91              		.cfi_offset 14, -4
+  24:Src/flash.c   ****  EraseInitStruct.Banks = 1;
+  92              		.loc 1 24 2 is_stmt 1 view .LVU8
+  93              		.loc 1 24 24 is_stmt 0 view .LVU9
+  94 0002 064B     		ldr	r3, .L7
+  95 0004 0122     		movs	r2, #1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 3
+
+
+  96 0006 5A60     		str	r2, [r3, #4]
+  25:Src/flash.c   ****  EraseInitStruct.TypeErase  = FLASH_TYPEERASE_PAGES;
+  97              		.loc 1 25 2 is_stmt 1 view .LVU10
+  98              		.loc 1 25 29 is_stmt 0 view .LVU11
+  99 0008 0021     		movs	r1, #0
+ 100 000a 1960     		str	r1, [r3]
+  26:Src/flash.c   ****  EraseInitStruct.PageAddress = addr; // d?a ch? page 64
+ 101              		.loc 1 26 2 is_stmt 1 view .LVU12
+ 102              		.loc 1 26 30 is_stmt 0 view .LVU13
+ 103 000c 9860     		str	r0, [r3, #8]
+  27:Src/flash.c   ****  EraseInitStruct.NbPages    = 1;
+ 104              		.loc 1 27 2 is_stmt 1 view .LVU14
+ 105              		.loc 1 27 29 is_stmt 0 view .LVU15
+ 106 000e DA60     		str	r2, [r3, #12]
+  28:Src/flash.c   ****  HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError);
+ 107              		.loc 1 28 2 is_stmt 1 view .LVU16
+ 108 0010 0349     		ldr	r1, .L7+4
+ 109 0012 1846     		mov	r0, r3
+ 110              	.LVL3:
+ 111              		.loc 1 28 2 is_stmt 0 view .LVU17
+ 112 0014 FFF7FEFF 		bl	HAL_FLASHEx_Erase
+ 113              	.LVL4:
+  29:Src/flash.c   **** }
+ 114              		.loc 1 29 1 view .LVU18
+ 115 0018 08BD     		pop	{r3, pc}
+ 116              	.L8:
+ 117 001a 00BF     		.align	2
+ 118              	.L7:
+ 119 001c 00000000 		.word	.LANCHOR0
+ 120 0020 00000000 		.word	.LANCHOR1
+ 121              		.cfi_endproc
+ 122              	.LFE70:
+ 124              		.section	.text.Flash_Write_array,"ax",%progbits
+ 125              		.align	1
+ 126              		.global	Flash_Write_array
+ 127              		.syntax unified
+ 128              		.thumb
+ 129              		.thumb_func
+ 130              		.fpu softvfp
+ 132              	Flash_Write_array:
+ 133              	.LVL5:
+ 134              	.LFB71:
+  30:Src/flash.c   **** 
+  31:Src/flash.c   **** 
+  32:Src/flash.c   **** void Flash_Write_array(uint32_t addr, uint8_t* data)
+  33:Src/flash.c   **** {
+ 135              		.loc 1 33 1 is_stmt 1 view -0
+ 136              		.cfi_startproc
+ 137              		@ args = 0, pretend = 0, frame = 0
+ 138              		@ frame_needed = 0, uses_anonymous_args = 0
+ 139              		.loc 1 33 1 is_stmt 0 view .LVU20
+ 140 0000 70B5     		push	{r4, r5, r6, lr}
+ 141              	.LCFI3:
+ 142              		.cfi_def_cfa_offset 16
+ 143              		.cfi_offset 4, -16
+ 144              		.cfi_offset 5, -12
+ 145              		.cfi_offset 6, -8
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 4
+
+
+ 146              		.cfi_offset 14, -4
+ 147 0002 0646     		mov	r6, r0
+ 148 0004 0D46     		mov	r5, r1
+  34:Src/flash.c   **** 	Flash_Unlock();
+ 149              		.loc 1 34 2 is_stmt 1 view .LVU21
+ 150 0006 FFF7FEFF 		bl	Flash_Unlock
+ 151              	.LVL6:
+  35:Src/flash.c   **** 	Flash_Erase(addr);
+ 152              		.loc 1 35 2 view .LVU22
+ 153 000a 3046     		mov	r0, r6
+ 154 000c FFF7FEFF 		bl	Flash_Erase
+ 155              	.LVL7:
+  36:Src/flash.c   **** 	int i;
+ 156              		.loc 1 36 2 view .LVU23
+  37:Src/flash.c   ****   //FLASH->CR |= FLASH_CR_PG;
+  38:Src/flash.c   **** 	lengthPage = 2048;
+ 157              		.loc 1 38 2 view .LVU24
+ 158              		.loc 1 38 13 is_stmt 0 view .LVU25
+ 159 0010 104B     		ldr	r3, .L13
+ 160 0012 4FF40062 		mov	r2, #2048
+ 161 0016 1A80     		strh	r2, [r3]	@ movhi
+  39:Src/flash.c   ****   for(i=0; i<lengthPage; i+=4)
+ 162              		.loc 1 39 3 is_stmt 1 view .LVU26
+ 163              	.LVL8:
+ 164              		.loc 1 39 8 is_stmt 0 view .LVU27
+ 165 0018 0024     		movs	r4, #0
+ 166              		.loc 1 39 3 view .LVU28
+ 167 001a 14E0     		b	.L10
+ 168              	.LVL9:
+ 169              	.L11:
+ 170              	.LBB2:
+  40:Src/flash.c   ****   {
+  41:Src/flash.c   **** 		uint32_t temp_data = (uint32_t)(data[i] << 24) | (uint32_t)(data[i+1] << 16) | (uint32_t)(data[i+
+ 171              		.loc 1 41 3 is_stmt 1 discriminator 3 view .LVU29
+ 172              		.loc 1 41 39 is_stmt 0 discriminator 3 view .LVU30
+ 173 001c 2A5D     		ldrb	r2, [r5, r4]	@ zero_extendqisi2
+ 174              		.loc 1 41 67 discriminator 3 view .LVU31
+ 175 001e 05EB040C 		add	ip, r5, r4
+ 176 0022 9CF80130 		ldrb	r3, [ip, #1]	@ zero_extendqisi2
+ 177              		.loc 1 41 73 discriminator 3 view .LVU32
+ 178 0026 1B04     		lsls	r3, r3, #16
+ 179              		.loc 1 41 50 discriminator 3 view .LVU33
+ 180 0028 43EA0263 		orr	r3, r3, r2, lsl #24
+ 181              		.loc 1 41 97 discriminator 3 view .LVU34
+ 182 002c 9CF80220 		ldrb	r2, [ip, #2]	@ zero_extendqisi2
+ 183              		.loc 1 41 80 discriminator 3 view .LVU35
+ 184 0030 43EA0223 		orr	r3, r3, r2, lsl #8
+ 185              		.loc 1 41 115 discriminator 3 view .LVU36
+ 186 0034 9CF80320 		ldrb	r2, [ip, #3]	@ zero_extendqisi2
+ 187              	.LVL10:
+  42:Src/flash.c   **** 		HAL_FLASH_Program(0x02u, addr + i, temp_data);
+ 188              		.loc 1 42 3 is_stmt 1 discriminator 3 view .LVU37
+ 189 0038 1A43     		orrs	r2, r2, r3
+ 190              	.LVL11:
+ 191              		.loc 1 42 3 is_stmt 0 discriminator 3 view .LVU38
+ 192 003a 0023     		movs	r3, #0
+ 193 003c A119     		adds	r1, r4, r6
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 5
+
+
+ 194 003e 0220     		movs	r0, #2
+ 195 0040 FFF7FEFF 		bl	HAL_FLASH_Program
+ 196              	.LVL12:
+ 197              		.loc 1 42 3 discriminator 3 view .LVU39
+ 198              	.LBE2:
+  39:Src/flash.c   ****   for(i=0; i<lengthPage; i+=4)
+ 199              		.loc 1 39 26 is_stmt 1 discriminator 3 view .LVU40
+  39:Src/flash.c   ****   for(i=0; i<lengthPage; i+=4)
+ 200              		.loc 1 39 27 is_stmt 0 discriminator 3 view .LVU41
+ 201 0044 0434     		adds	r4, r4, #4
+ 202              	.LVL13:
+ 203              	.L10:
+  39:Src/flash.c   ****   for(i=0; i<lengthPage; i+=4)
+ 204              		.loc 1 39 12 is_stmt 1 discriminator 1 view .LVU42
+  39:Src/flash.c   ****   for(i=0; i<lengthPage; i+=4)
+ 205              		.loc 1 39 13 is_stmt 0 discriminator 1 view .LVU43
+ 206 0046 034B     		ldr	r3, .L13
+ 207 0048 1B88     		ldrh	r3, [r3]
+  39:Src/flash.c   ****   for(i=0; i<lengthPage; i+=4)
+ 208              		.loc 1 39 3 discriminator 1 view .LVU44
+ 209 004a A342     		cmp	r3, r4
+ 210 004c E6DC     		bgt	.L11
+  43:Src/flash.c   ****   }
+  44:Src/flash.c   **** 	Flash_Lock();
+ 211              		.loc 1 44 2 is_stmt 1 view .LVU45
+ 212 004e FFF7FEFF 		bl	Flash_Lock
+ 213              	.LVL14:
+  45:Src/flash.c   **** }
+ 214              		.loc 1 45 1 is_stmt 0 view .LVU46
+ 215 0052 70BD     		pop	{r4, r5, r6, pc}
+ 216              	.LVL15:
+ 217              	.L14:
+ 218              		.loc 1 45 1 view .LVU47
+ 219              		.align	2
+ 220              	.L13:
+ 221 0054 00000000 		.word	.LANCHOR2
+ 222              		.cfi_endproc
+ 223              	.LFE71:
+ 225              		.section	.text.Flash_Write_32,"ax",%progbits
+ 226              		.align	1
+ 227              		.global	Flash_Write_32
+ 228              		.syntax unified
+ 229              		.thumb
+ 230              		.thumb_func
+ 231              		.fpu softvfp
+ 233              	Flash_Write_32:
+ 234              	.LVL16:
+ 235              	.LFB72:
+  46:Src/flash.c   **** void Flash_Write_32(uint32_t addr, uint32_t data)
+  47:Src/flash.c   **** {
+ 236              		.loc 1 47 1 is_stmt 1 view -0
+ 237              		.cfi_startproc
+ 238              		@ args = 0, pretend = 0, frame = 0
+ 239              		@ frame_needed = 0, uses_anonymous_args = 0
+ 240              		.loc 1 47 1 is_stmt 0 view .LVU49
+ 241 0000 38B5     		push	{r3, r4, r5, lr}
+ 242              	.LCFI4:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 6
+
+
+ 243              		.cfi_def_cfa_offset 16
+ 244              		.cfi_offset 3, -16
+ 245              		.cfi_offset 4, -12
+ 246              		.cfi_offset 5, -8
+ 247              		.cfi_offset 14, -4
+ 248 0002 0446     		mov	r4, r0
+ 249 0004 0D46     		mov	r5, r1
+  48:Src/flash.c   **** 	Flash_Unlock();
+ 250              		.loc 1 48 2 is_stmt 1 view .LVU50
+ 251 0006 FFF7FEFF 		bl	Flash_Unlock
+ 252              	.LVL17:
+  49:Src/flash.c   **** 	Flash_Erase(addr);
+ 253              		.loc 1 49 2 view .LVU51
+ 254 000a 2046     		mov	r0, r4
+ 255 000c FFF7FEFF 		bl	Flash_Erase
+ 256              	.LVL18:
+  50:Src/flash.c   ****   //FLASH->CR |= FLASH_CR_PG;
+  51:Src/flash.c   **** 	HAL_FLASH_Program(0x02u, addr, data);
+ 257              		.loc 1 51 2 view .LVU52
+ 258 0010 2A46     		mov	r2, r5
+ 259 0012 0023     		movs	r3, #0
+ 260 0014 2146     		mov	r1, r4
+ 261 0016 0220     		movs	r0, #2
+ 262 0018 FFF7FEFF 		bl	HAL_FLASH_Program
+ 263              	.LVL19:
+  52:Src/flash.c   **** 	Flash_Lock();
+ 264              		.loc 1 52 2 view .LVU53
+ 265 001c FFF7FEFF 		bl	Flash_Lock
+ 266              	.LVL20:
+  53:Src/flash.c   **** }
+ 267              		.loc 1 53 1 is_stmt 0 view .LVU54
+ 268 0020 38BD     		pop	{r3, r4, r5, pc}
+ 269              		.loc 1 53 1 view .LVU55
+ 270              		.cfi_endproc
+ 271              	.LFE72:
+ 273              		.global	PAGEError
+ 274              		.global	lengthPage
+ 275              		.global	EraseInitStruct
+ 276              		.section	.bss.EraseInitStruct,"aw",%nobits
+ 277              		.align	2
+ 278              		.set	.LANCHOR0,. + 0
+ 281              	EraseInitStruct:
+ 282 0000 00000000 		.space	16
+ 282      00000000 
+ 282      00000000 
+ 282      00000000 
+ 283              		.section	.bss.PAGEError,"aw",%nobits
+ 284              		.align	2
+ 285              		.set	.LANCHOR1,. + 0
+ 288              	PAGEError:
+ 289 0000 00000000 		.space	4
+ 290              		.section	.bss.lengthPage,"aw",%nobits
+ 291              		.align	1
+ 292              		.set	.LANCHOR2,. + 0
+ 295              	lengthPage:
+ 296 0000 0000     		.space	2
+ 297              		.text
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 7
+
+
+ 298              	.Letext0:
+ 299              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+ 300              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 301              		.file 4 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h"
+ 302              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 flash.c
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:16     .text.Flash_Lock:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:24     .text.Flash_Lock:00000000 Flash_Lock
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:45     .text.Flash_Unlock:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:52     .text.Flash_Unlock:00000000 Flash_Unlock
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:72     .text.Flash_Erase:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:79     .text.Flash_Erase:00000000 Flash_Erase
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:119    .text.Flash_Erase:0000001c $d
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:125    .text.Flash_Write_array:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:132    .text.Flash_Write_array:00000000 Flash_Write_array
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:221    .text.Flash_Write_array:00000054 $d
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:226    .text.Flash_Write_32:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:233    .text.Flash_Write_32:00000000 Flash_Write_32
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:288    .bss.PAGEError:00000000 PAGEError
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:295    .bss.lengthPage:00000000 lengthPage
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:281    .bss.EraseInitStruct:00000000 EraseInitStruct
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:277    .bss.EraseInitStruct:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:284    .bss.PAGEError:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccoB1atk.s:291    .bss.lengthPage:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_FLASH_Lock
+HAL_FLASH_Unlock
+HAL_FLASHEx_Erase
+HAL_FLASH_Program

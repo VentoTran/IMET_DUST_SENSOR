@@ -1,0 +1,213 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"spi.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.spi_init,"ax",%progbits
+  16              		.align	1
+  17              		.global	spi_init
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	spi_init:
+  25              	.LVL0:
+  26              	.LFB68:
+  27              		.file 1 "Src/spi.c"
+   1:Src/spi.c     **** /*
+   2:Src/spi.c     ****  * spi.c
+   3:Src/spi.c     ****  *
+   4:Src/spi.c     ****  *  Created on: Dec 14, 2021
+   5:Src/spi.c     ****  *      Author: manht
+   6:Src/spi.c     ****  */
+   7:Src/spi.c     **** 
+   8:Src/spi.c     **** #include "spi.h"
+   9:Src/spi.c     **** uint8_t spi_init(SPI_HandleTypeDef *hspi, SPI_TypeDef *SPIx){
+  28              		.loc 1 9 61 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 9 61 is_stmt 0 view .LVU1
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+  37              		.cfi_offset 14, -4
+  38 0002 0446     		mov	r4, r0
+  10:Src/spi.c     **** 	hspi->Instance = SPIx;
+  39              		.loc 1 10 2 is_stmt 1 view .LVU2
+  40              		.loc 1 10 17 is_stmt 0 view .LVU3
+  41 0004 0160     		str	r1, [r0]
+  11:Src/spi.c     **** 	hspi->Init.Mode = SPI_MODE_MASTER;
+  42              		.loc 1 11 2 is_stmt 1 view .LVU4
+  43              		.loc 1 11 18 is_stmt 0 view .LVU5
+  44 0006 4FF48273 		mov	r3, #260
+  45 000a 4360     		str	r3, [r0, #4]
+  12:Src/spi.c     **** 	hspi->Init.Direction = SPI_DIRECTION_2LINES;
+  46              		.loc 1 12 2 is_stmt 1 view .LVU6
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s 			page 2
+
+
+  47              		.loc 1 12 23 is_stmt 0 view .LVU7
+  48 000c 0023     		movs	r3, #0
+  49 000e 8360     		str	r3, [r0, #8]
+  13:Src/spi.c     **** 	hspi->Init.DataSize = SPI_DATASIZE_8BIT;
+  50              		.loc 1 13 2 is_stmt 1 view .LVU8
+  51              		.loc 1 13 22 is_stmt 0 view .LVU9
+  52 0010 C360     		str	r3, [r0, #12]
+  14:Src/spi.c     **** 	hspi->Init.CLKPolarity = SPI_POLARITY_LOW;
+  53              		.loc 1 14 2 is_stmt 1 view .LVU10
+  54              		.loc 1 14 25 is_stmt 0 view .LVU11
+  55 0012 0361     		str	r3, [r0, #16]
+  15:Src/spi.c     **** 	hspi->Init.CLKPhase = SPI_PHASE_1EDGE;
+  56              		.loc 1 15 2 is_stmt 1 view .LVU12
+  57              		.loc 1 15 22 is_stmt 0 view .LVU13
+  58 0014 4361     		str	r3, [r0, #20]
+  16:Src/spi.c     **** 	hspi->Init.NSS = SPI_NSS_SOFT;
+  59              		.loc 1 16 2 is_stmt 1 view .LVU14
+  60              		.loc 1 16 17 is_stmt 0 view .LVU15
+  61 0016 4FF40072 		mov	r2, #512
+  62 001a 8261     		str	r2, [r0, #24]
+  17:Src/spi.c     **** 	hspi->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  63              		.loc 1 17 2 is_stmt 1 view .LVU16
+  64              		.loc 1 17 31 is_stmt 0 view .LVU17
+  65 001c 1822     		movs	r2, #24
+  66 001e C261     		str	r2, [r0, #28]
+  18:Src/spi.c     **** 	hspi->Init.FirstBit = SPI_FIRSTBIT_MSB;
+  67              		.loc 1 18 2 is_stmt 1 view .LVU18
+  68              		.loc 1 18 22 is_stmt 0 view .LVU19
+  69 0020 0362     		str	r3, [r0, #32]
+  19:Src/spi.c     **** 	hspi->Init.TIMode = SPI_TIMODE_DISABLE;
+  70              		.loc 1 19 2 is_stmt 1 view .LVU20
+  71              		.loc 1 19 20 is_stmt 0 view .LVU21
+  72 0022 4362     		str	r3, [r0, #36]
+  20:Src/spi.c     **** 	hspi->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  73              		.loc 1 20 2 is_stmt 1 view .LVU22
+  74              		.loc 1 20 28 is_stmt 0 view .LVU23
+  75 0024 8362     		str	r3, [r0, #40]
+  21:Src/spi.c     **** 	hspi->Init.CRCPolynomial = 10;
+  76              		.loc 1 21 2 is_stmt 1 view .LVU24
+  77              		.loc 1 21 27 is_stmt 0 view .LVU25
+  78 0026 0A23     		movs	r3, #10
+  79 0028 C362     		str	r3, [r0, #44]
+  22:Src/spi.c     **** 	if (HAL_SPI_Init(hspi) != HAL_OK) return 0;
+  80              		.loc 1 22 2 is_stmt 1 view .LVU26
+  81              		.loc 1 22 6 is_stmt 0 view .LVU27
+  82 002a FFF7FEFF 		bl	HAL_SPI_Init
+  83              	.LVL1:
+  84              		.loc 1 22 5 view .LVU28
+  85 002e 30B9     		cbnz	r0, .L3
+  23:Src/spi.c     **** 	__HAL_SPI_ENABLE(hspi);
+  86              		.loc 1 23 2 is_stmt 1 view .LVU29
+  87 0030 2268     		ldr	r2, [r4]
+  88 0032 1368     		ldr	r3, [r2]
+  89 0034 43F04003 		orr	r3, r3, #64
+  90 0038 1360     		str	r3, [r2]
+  24:Src/spi.c     **** 	return 1;
+  91              		.loc 1 24 2 view .LVU30
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s 			page 3
+
+
+  92              		.loc 1 24 9 is_stmt 0 view .LVU31
+  93 003a 0120     		movs	r0, #1
+  94              	.L2:
+  25:Src/spi.c     **** }
+  95              		.loc 1 25 1 view .LVU32
+  96 003c 10BD     		pop	{r4, pc}
+  97              	.LVL2:
+  98              	.L3:
+  22:Src/spi.c     **** 	__HAL_SPI_ENABLE(hspi);
+  99              		.loc 1 22 43 view .LVU33
+ 100 003e 0020     		movs	r0, #0
+ 101 0040 FCE7     		b	.L2
+ 102              		.cfi_endproc
+ 103              	.LFE68:
+ 105              		.section	.text.spi_tx_byte,"ax",%progbits
+ 106              		.align	1
+ 107              		.global	spi_tx_byte
+ 108              		.syntax unified
+ 109              		.thumb
+ 110              		.thumb_func
+ 111              		.fpu softvfp
+ 113              	spi_tx_byte:
+ 114              	.LFB69:
+  26:Src/spi.c     **** uint8_t spi_tx_byte(SPI_HandleTypeDef *hspi, uint8_t data){
+ 115              		.loc 1 26 59 is_stmt 1 view -0
+ 116              		.cfi_startproc
+ 117              		@ args = 0, pretend = 0, frame = 0
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119              		@ link register save eliminated.
+ 120              	.LVL3:
+ 121              	.L6:
+  27:Src/spi.c     **** 	while(__HAL_SPI_GET_FLAG(hspi,SPI_FLAG_TXE) == RESET );
+ 122              		.loc 1 27 56 discriminator 1 view .LVU35
+ 123              		.loc 1 27 7 discriminator 1 view .LVU36
+ 124              		.loc 1 27 8 is_stmt 0 discriminator 1 view .LVU37
+ 125 0000 0368     		ldr	r3, [r0]
+ 126 0002 9A68     		ldr	r2, [r3, #8]
+ 127              		.loc 1 27 7 discriminator 1 view .LVU38
+ 128 0004 12F0020F 		tst	r2, #2
+ 129 0008 FAD0     		beq	.L6
+  28:Src/spi.c     **** 	hspi->Instance->DR = data;
+ 130              		.loc 1 28 2 is_stmt 1 view .LVU39
+ 131              		.loc 1 28 21 is_stmt 0 view .LVU40
+ 132 000a D960     		str	r1, [r3, #12]
+  29:Src/spi.c     **** 	while(__HAL_SPI_GET_FLAG(hspi,SPI_FLAG_RXNE) == RESET );
+ 133              		.loc 1 29 2 is_stmt 1 view .LVU41
+ 134              	.L7:
+ 135              		.loc 1 29 57 discriminator 1 view .LVU42
+ 136              		.loc 1 29 7 discriminator 1 view .LVU43
+ 137              		.loc 1 29 8 is_stmt 0 discriminator 1 view .LVU44
+ 138 000c 0368     		ldr	r3, [r0]
+ 139 000e 9A68     		ldr	r2, [r3, #8]
+ 140              		.loc 1 29 7 discriminator 1 view .LVU45
+ 141 0010 12F0010F 		tst	r2, #1
+ 142 0014 FAD0     		beq	.L7
+  30:Src/spi.c     **** 	return hspi->Instance->DR;
+ 143              		.loc 1 30 2 is_stmt 1 view .LVU46
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s 			page 4
+
+
+ 144              		.loc 1 30 23 is_stmt 0 view .LVU47
+ 145 0016 D868     		ldr	r0, [r3, #12]
+ 146              	.LVL4:
+  31:Src/spi.c     **** }
+ 147              		.loc 1 31 1 view .LVU48
+ 148 0018 C0B2     		uxtb	r0, r0
+ 149 001a 7047     		bx	lr
+ 150              		.cfi_endproc
+ 151              	.LFE69:
+ 153              		.text
+ 154              	.Letext0:
+ 155              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+ 156              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 157              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h"
+ 158              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
+ 159              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 160              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 161              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 spi.c
+C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s:16     .text.spi_init:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s:24     .text.spi_init:00000000 spi_init
+C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s:106    .text.spi_tx_byte:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\cclT6q1g.s:113    .text.spi_tx_byte:00000000 spi_tx_byte
+
+UNDEFINED SYMBOLS
+HAL_SPI_Init

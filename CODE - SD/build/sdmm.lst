@@ -1,0 +1,2626 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"sdmm.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.rcvr_mmc,"ax",%progbits
+  16              		.align	1
+  17              		.arch armv7-m
+  18              		.syntax unified
+  19              		.thumb
+  20              		.thumb_func
+  21              		.fpu softvfp
+  23              	rcvr_mmc:
+  24              	.LVL0:
+  25              	.LFB70:
+  26              		.file 1 "Src/sdmm.c"
+   1:Src/sdmm.c    **** #include "sdmm.h"
+   2:Src/sdmm.c    **** 
+   3:Src/sdmm.c    **** static DSTATUS Stat = STA_NOINIT;	/* Disk status */
+   4:Src/sdmm.c    **** 
+   5:Src/sdmm.c    **** static BYTE CardType;			/* b0:MMC, b1:SDv1, b2:SDv2, b3:Block addressing */
+   6:Src/sdmm.c    **** 
+   7:Src/sdmm.c    **** extern SPI_HandleTypeDef hspi1;
+   8:Src/sdmm.c    **** static void dly_us (UINT n)	/* Delay n microseconds  */
+   9:Src/sdmm.c    **** {
+  10:Src/sdmm.c    **** 	delay_us(n);
+  11:Src/sdmm.c    **** }
+  12:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  13:Src/sdmm.c    **** /* Transmit bytes to the card 				                             */
+  14:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  15:Src/sdmm.c    **** 
+  16:Src/sdmm.c    **** static void xmit_mmc (
+  17:Src/sdmm.c    **** 	const BYTE* buff,	/* Data to be sent */
+  18:Src/sdmm.c    **** 	UINT bc				/* Number of bytes to send */
+  19:Src/sdmm.c    **** )
+  20:Src/sdmm.c    **** {
+  21:Src/sdmm.c    **** 	BYTE d;
+  22:Src/sdmm.c    **** 	do {
+  23:Src/sdmm.c    **** 		d = *buff++;	/* Get a byte to be sent */
+  24:Src/sdmm.c    **** 		spi_tx_byte(&hspi1, d);
+  25:Src/sdmm.c    **** 	} while (--bc);
+  26:Src/sdmm.c    **** }
+  27:Src/sdmm.c    **** 
+  28:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  29:Src/sdmm.c    **** /* Receive bytes from the card 				                             */
+  30:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  31:Src/sdmm.c    **** 
+  32:Src/sdmm.c    **** static
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 2
+
+
+  33:Src/sdmm.c    **** void rcvr_mmc (
+  34:Src/sdmm.c    **** 	BYTE *buff,	/* Pointer to read buffer */
+  35:Src/sdmm.c    **** 	UINT bc		/* Number of bytes to receive */
+  36:Src/sdmm.c    **** )
+  37:Src/sdmm.c    **** {
+  27              		.loc 1 37 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		.loc 1 37 1 is_stmt 0 view .LVU1
+  32 0000 70B5     		push	{r4, r5, r6, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 4, -16
+  36              		.cfi_offset 5, -12
+  37              		.cfi_offset 6, -8
+  38              		.cfi_offset 14, -4
+  39 0002 0646     		mov	r6, r0
+  40 0004 0D46     		mov	r5, r1
+  38:Src/sdmm.c    **** 	BYTE dummy = 0xff;
+  41              		.loc 1 38 2 is_stmt 1 view .LVU2
+  42              	.LVL1:
+  43              	.L2:
+  39:Src/sdmm.c    **** 	do {
+  44              		.loc 1 39 2 discriminator 1 view .LVU3
+  40:Src/sdmm.c    **** 		*buff++ = spi_tx_byte(&hspi1, dummy);
+  45              		.loc 1 40 3 discriminator 1 view .LVU4
+  46              		.loc 1 40 13 is_stmt 0 discriminator 1 view .LVU5
+  47 0006 FF21     		movs	r1, #255
+  48 0008 0348     		ldr	r0, .L4
+  49 000a FFF7FEFF 		bl	spi_tx_byte
+  50              	.LVL2:
+  51              		.loc 1 40 11 discriminator 1 view .LVU6
+  52 000e 3070     		strb	r0, [r6]
+  53 0010 0136     		adds	r6, r6, #1
+  54              	.LVL3:
+  41:Src/sdmm.c    **** 	} while (--bc);
+  55              		.loc 1 41 10 is_stmt 1 discriminator 1 view .LVU7
+  56              		.loc 1 41 2 is_stmt 0 discriminator 1 view .LVU8
+  57 0012 013D     		subs	r5, r5, #1
+  58              	.LVL4:
+  59              		.loc 1 41 2 discriminator 1 view .LVU9
+  60 0014 F7D1     		bne	.L2
+  42:Src/sdmm.c    **** }
+  61              		.loc 1 42 1 view .LVU10
+  62 0016 70BD     		pop	{r4, r5, r6, pc}
+  63              	.LVL5:
+  64              	.L5:
+  65              		.loc 1 42 1 view .LVU11
+  66              		.align	2
+  67              	.L4:
+  68 0018 00000000 		.word	hspi1
+  69              		.cfi_endproc
+  70              	.LFE70:
+  72              		.section	.text.xmit_mmc,"ax",%progbits
+  73              		.align	1
+  74              		.syntax unified
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 3
+
+
+  75              		.thumb
+  76              		.thumb_func
+  77              		.fpu softvfp
+  79              	xmit_mmc:
+  80              	.LVL6:
+  81              	.LFB69:
+  20:Src/sdmm.c    **** 	BYTE d;
+  82              		.loc 1 20 1 is_stmt 1 view -0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 0
+  85              		@ frame_needed = 0, uses_anonymous_args = 0
+  20:Src/sdmm.c    **** 	BYTE d;
+  86              		.loc 1 20 1 is_stmt 0 view .LVU13
+  87 0000 38B5     		push	{r3, r4, r5, lr}
+  88              	.LCFI1:
+  89              		.cfi_def_cfa_offset 16
+  90              		.cfi_offset 3, -16
+  91              		.cfi_offset 4, -12
+  92              		.cfi_offset 5, -8
+  93              		.cfi_offset 14, -4
+  94 0002 0546     		mov	r5, r0
+  95 0004 0C46     		mov	r4, r1
+  96              	.LVL7:
+  97              	.L7:
+  21:Src/sdmm.c    **** 	do {
+  98              		.loc 1 21 2 is_stmt 1 discriminator 1 view .LVU14
+  22:Src/sdmm.c    **** 		d = *buff++;	/* Get a byte to be sent */
+  99              		.loc 1 22 2 discriminator 1 view .LVU15
+  23:Src/sdmm.c    **** 		spi_tx_byte(&hspi1, d);
+ 100              		.loc 1 23 3 discriminator 1 view .LVU16
+  24:Src/sdmm.c    **** 	} while (--bc);
+ 101              		.loc 1 24 3 discriminator 1 view .LVU17
+ 102 0006 2978     		ldrb	r1, [r5]	@ zero_extendqisi2
+ 103 0008 0135     		adds	r5, r5, #1
+ 104              	.LVL8:
+  24:Src/sdmm.c    **** 	} while (--bc);
+ 105              		.loc 1 24 3 is_stmt 0 discriminator 1 view .LVU18
+ 106 000a 0348     		ldr	r0, .L9
+ 107 000c FFF7FEFF 		bl	spi_tx_byte
+ 108              	.LVL9:
+  25:Src/sdmm.c    **** }
+ 109              		.loc 1 25 10 is_stmt 1 discriminator 1 view .LVU19
+  25:Src/sdmm.c    **** }
+ 110              		.loc 1 25 2 is_stmt 0 discriminator 1 view .LVU20
+ 111 0010 013C     		subs	r4, r4, #1
+ 112              	.LVL10:
+  25:Src/sdmm.c    **** }
+ 113              		.loc 1 25 2 discriminator 1 view .LVU21
+ 114 0012 F8D1     		bne	.L7
+  26:Src/sdmm.c    **** 
+ 115              		.loc 1 26 1 view .LVU22
+ 116 0014 38BD     		pop	{r3, r4, r5, pc}
+ 117              	.LVL11:
+ 118              	.L10:
+  26:Src/sdmm.c    **** 
+ 119              		.loc 1 26 1 view .LVU23
+ 120 0016 00BF     		.align	2
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 4
+
+
+ 121              	.L9:
+ 122 0018 00000000 		.word	hspi1
+ 123              		.cfi_endproc
+ 124              	.LFE69:
+ 126              		.section	.text.dly_us,"ax",%progbits
+ 127              		.align	1
+ 128              		.syntax unified
+ 129              		.thumb
+ 130              		.thumb_func
+ 131              		.fpu softvfp
+ 133              	dly_us:
+ 134              	.LVL12:
+ 135              	.LFB68:
+   9:Src/sdmm.c    **** 	delay_us(n);
+ 136              		.loc 1 9 1 is_stmt 1 view -0
+ 137              		.cfi_startproc
+ 138              		@ args = 0, pretend = 0, frame = 0
+ 139              		@ frame_needed = 0, uses_anonymous_args = 0
+   9:Src/sdmm.c    **** 	delay_us(n);
+ 140              		.loc 1 9 1 is_stmt 0 view .LVU25
+ 141 0000 08B5     		push	{r3, lr}
+ 142              	.LCFI2:
+ 143              		.cfi_def_cfa_offset 8
+ 144              		.cfi_offset 3, -8
+ 145              		.cfi_offset 14, -4
+  10:Src/sdmm.c    **** }
+ 146              		.loc 1 10 2 is_stmt 1 view .LVU26
+ 147 0002 FFF7FEFF 		bl	delay_us
+ 148              	.LVL13:
+  11:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 149              		.loc 1 11 1 is_stmt 0 view .LVU27
+ 150 0006 08BD     		pop	{r3, pc}
+ 151              		.cfi_endproc
+ 152              	.LFE68:
+ 154              		.section	.text.wait_ready,"ax",%progbits
+ 155              		.align	1
+ 156              		.syntax unified
+ 157              		.thumb
+ 158              		.thumb_func
+ 159              		.fpu softvfp
+ 161              	wait_ready:
+ 162              	.LFB71:
+  43:Src/sdmm.c    **** 
+  44:Src/sdmm.c    **** 
+  45:Src/sdmm.c    **** 
+  46:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  47:Src/sdmm.c    **** /* Wait for card ready                                                   */
+  48:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  49:Src/sdmm.c    **** 
+  50:Src/sdmm.c    **** static
+  51:Src/sdmm.c    **** int wait_ready (void)	/* 1:OK, 0:Timeout */
+  52:Src/sdmm.c    **** {
+ 163              		.loc 1 52 1 is_stmt 1 view -0
+ 164              		.cfi_startproc
+ 165              		@ args = 0, pretend = 0, frame = 8
+ 166              		@ frame_needed = 0, uses_anonymous_args = 0
+ 167 0000 10B5     		push	{r4, lr}
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 5
+
+
+ 168              	.LCFI3:
+ 169              		.cfi_def_cfa_offset 8
+ 170              		.cfi_offset 4, -8
+ 171              		.cfi_offset 14, -4
+ 172 0002 82B0     		sub	sp, sp, #8
+ 173              	.LCFI4:
+ 174              		.cfi_def_cfa_offset 16
+  53:Src/sdmm.c    **** 	BYTE d;
+ 175              		.loc 1 53 2 view .LVU29
+  54:Src/sdmm.c    **** 	UINT tmr;
+ 176              		.loc 1 54 2 view .LVU30
+  55:Src/sdmm.c    **** 
+  56:Src/sdmm.c    **** 
+  57:Src/sdmm.c    **** 	for (tmr = 5000; tmr; tmr--) {	/* Wait for ready in timeout of 500ms */
+ 177              		.loc 1 57 2 view .LVU31
+ 178              	.LVL14:
+ 179              		.loc 1 57 11 is_stmt 0 view .LVU32
+ 180 0004 41F28834 		movw	r4, #5000
+ 181              	.LVL15:
+ 182              	.L14:
+ 183              		.loc 1 57 19 is_stmt 1 discriminator 1 view .LVU33
+ 184              		.loc 1 57 2 is_stmt 0 discriminator 1 view .LVU34
+ 185 0008 6CB1     		cbz	r4, .L15
+  58:Src/sdmm.c    **** 		rcvr_mmc(&d, 1);
+ 186              		.loc 1 58 3 is_stmt 1 view .LVU35
+ 187 000a 0121     		movs	r1, #1
+ 188 000c 0DF10700 		add	r0, sp, #7
+ 189 0010 FFF7FEFF 		bl	rcvr_mmc
+ 190              	.LVL16:
+  59:Src/sdmm.c    **** 		if (d == 0xFF) break;
+ 191              		.loc 1 59 3 view .LVU36
+ 192              		.loc 1 59 9 is_stmt 0 view .LVU37
+ 193 0014 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+ 194              		.loc 1 59 6 view .LVU38
+ 195 0018 FF2B     		cmp	r3, #255
+ 196 001a 04D0     		beq	.L15
+  60:Src/sdmm.c    **** 		dly_us(100);
+ 197              		.loc 1 60 3 is_stmt 1 discriminator 2 view .LVU39
+ 198 001c 6420     		movs	r0, #100
+ 199 001e FFF7FEFF 		bl	dly_us
+ 200              	.LVL17:
+  57:Src/sdmm.c    **** 		rcvr_mmc(&d, 1);
+ 201              		.loc 1 57 24 discriminator 2 view .LVU40
+  57:Src/sdmm.c    **** 		rcvr_mmc(&d, 1);
+ 202              		.loc 1 57 27 is_stmt 0 discriminator 2 view .LVU41
+ 203 0022 013C     		subs	r4, r4, #1
+ 204              	.LVL18:
+  57:Src/sdmm.c    **** 		rcvr_mmc(&d, 1);
+ 205              		.loc 1 57 27 discriminator 2 view .LVU42
+ 206 0024 F0E7     		b	.L14
+ 207              	.L15:
+  61:Src/sdmm.c    **** 	}
+  62:Src/sdmm.c    **** 
+  63:Src/sdmm.c    **** 	return tmr ? 1 : 0;
+ 208              		.loc 1 63 2 is_stmt 1 view .LVU43
+  64:Src/sdmm.c    **** }
+ 209              		.loc 1 64 1 is_stmt 0 view .LVU44
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 6
+
+
+ 210 0026 201E     		subs	r0, r4, #0
+ 211 0028 18BF     		it	ne
+ 212 002a 0120     		movne	r0, #1
+ 213 002c 02B0     		add	sp, sp, #8
+ 214              	.LCFI5:
+ 215              		.cfi_def_cfa_offset 8
+ 216              		@ sp needed
+ 217 002e 10BD     		pop	{r4, pc}
+ 218              		.loc 1 64 1 view .LVU45
+ 219              		.cfi_endproc
+ 220              	.LFE71:
+ 222              		.section	.text.xmit_datablock,"ax",%progbits
+ 223              		.align	1
+ 224              		.syntax unified
+ 225              		.thumb
+ 226              		.thumb_func
+ 227              		.fpu softvfp
+ 229              	xmit_datablock:
+ 230              	.LVL19:
+ 231              	.LFB75:
+  65:Src/sdmm.c    **** 
+  66:Src/sdmm.c    **** 
+  67:Src/sdmm.c    **** 
+  68:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  69:Src/sdmm.c    **** /* Deselect the card and release SPI bus                                 */
+  70:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  71:Src/sdmm.c    **** 
+  72:Src/sdmm.c    **** static
+  73:Src/sdmm.c    **** void deselect (void)
+  74:Src/sdmm.c    **** {
+  75:Src/sdmm.c    **** 	BYTE d;
+  76:Src/sdmm.c    **** 
+  77:Src/sdmm.c    **** 	CS_H();				/* Set CS# high */
+  78:Src/sdmm.c    **** 	rcvr_mmc(&d, 1);	/* Dummy clock (force DO hi-z for multiple slave SPI) */
+  79:Src/sdmm.c    **** }
+  80:Src/sdmm.c    **** 
+  81:Src/sdmm.c    **** 
+  82:Src/sdmm.c    **** 
+  83:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  84:Src/sdmm.c    **** /* Select the card and wait for ready                                    */
+  85:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+  86:Src/sdmm.c    **** 
+  87:Src/sdmm.c    **** static
+  88:Src/sdmm.c    **** int SD_select (void)	/* 1:OK, 0:Timeout */
+  89:Src/sdmm.c    **** {
+  90:Src/sdmm.c    **** 	BYTE d;
+  91:Src/sdmm.c    **** 
+  92:Src/sdmm.c    **** 	CS_L();				/* Set CS# low */
+  93:Src/sdmm.c    **** 	rcvr_mmc(&d, 1);	/* Dummy clock (force DO enabled) */
+  94:Src/sdmm.c    **** 	if (wait_ready()) return 1;	/* Wait for card ready */
+  95:Src/sdmm.c    **** 
+  96:Src/sdmm.c    **** 	deselect();
+  97:Src/sdmm.c    **** 	return 0;			/* Failed */
+  98:Src/sdmm.c    **** }
+  99:Src/sdmm.c    **** 
+ 100:Src/sdmm.c    **** 
+ 101:Src/sdmm.c    **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 7
+
+
+ 102:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 103:Src/sdmm.c    **** /* Receive a data packet from the card                                   */
+ 104:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 105:Src/sdmm.c    **** 
+ 106:Src/sdmm.c    **** static
+ 107:Src/sdmm.c    **** int rcvr_datablock (	/* 1:OK, 0:Failed */
+ 108:Src/sdmm.c    **** 	BYTE *buff,			/* Data buffer to store received data */
+ 109:Src/sdmm.c    **** 	UINT btr			/* Byte count */
+ 110:Src/sdmm.c    **** )
+ 111:Src/sdmm.c    **** {
+ 112:Src/sdmm.c    **** 	BYTE d[2];
+ 113:Src/sdmm.c    **** 	UINT tmr;
+ 114:Src/sdmm.c    **** 
+ 115:Src/sdmm.c    **** 
+ 116:Src/sdmm.c    **** 	for (tmr = 1000; tmr; tmr--) {	/* Wait for data packet in timeout of 100ms */
+ 117:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 118:Src/sdmm.c    **** 		if (d[0] != 0xFF) break;
+ 119:Src/sdmm.c    **** 		dly_us(100);
+ 120:Src/sdmm.c    **** 	}
+ 121:Src/sdmm.c    **** 	if (d[0] != 0xFE) return 0;		/* If not valid data token, return with error */
+ 122:Src/sdmm.c    **** 
+ 123:Src/sdmm.c    **** 	rcvr_mmc(buff, btr);			/* Receive the data block into buffer */
+ 124:Src/sdmm.c    **** 	rcvr_mmc(d, 2);					/* Discard CRC */
+ 125:Src/sdmm.c    **** 
+ 126:Src/sdmm.c    **** 	return 1;						/* Return with success */
+ 127:Src/sdmm.c    **** }
+ 128:Src/sdmm.c    **** 
+ 129:Src/sdmm.c    **** 
+ 130:Src/sdmm.c    **** 
+ 131:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 132:Src/sdmm.c    **** /* Send a data packet to the card                                        */
+ 133:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 134:Src/sdmm.c    **** 
+ 135:Src/sdmm.c    **** static
+ 136:Src/sdmm.c    **** int xmit_datablock (	/* 1:OK, 0:Failed */
+ 137:Src/sdmm.c    **** 	const BYTE *buff,	/* 512 byte data block to be transmitted */
+ 138:Src/sdmm.c    **** 	BYTE token			/* Data/Stop token */
+ 139:Src/sdmm.c    **** )
+ 140:Src/sdmm.c    **** {
+ 232              		.loc 1 140 1 is_stmt 1 view -0
+ 233              		.cfi_startproc
+ 234              		@ args = 0, pretend = 0, frame = 8
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 236              		.loc 1 140 1 is_stmt 0 view .LVU47
+ 237 0000 30B5     		push	{r4, r5, lr}
+ 238              	.LCFI6:
+ 239              		.cfi_def_cfa_offset 12
+ 240              		.cfi_offset 4, -12
+ 241              		.cfi_offset 5, -8
+ 242              		.cfi_offset 14, -4
+ 243 0002 83B0     		sub	sp, sp, #12
+ 244              	.LCFI7:
+ 245              		.cfi_def_cfa_offset 24
+ 246 0004 0546     		mov	r5, r0
+ 247 0006 0C46     		mov	r4, r1
+ 141:Src/sdmm.c    **** 	BYTE d[2];
+ 248              		.loc 1 141 2 is_stmt 1 view .LVU48
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 8
+
+
+ 142:Src/sdmm.c    **** 
+ 143:Src/sdmm.c    **** 
+ 144:Src/sdmm.c    **** 	if (!wait_ready()) return 0;
+ 249              		.loc 1 144 2 view .LVU49
+ 250              		.loc 1 144 7 is_stmt 0 view .LVU50
+ 251 0008 FFF7FEFF 		bl	wait_ready
+ 252              	.LVL20:
+ 253              		.loc 1 144 5 view .LVU51
+ 254 000c 08B9     		cbnz	r0, .L23
+ 255              	.L18:
+ 145:Src/sdmm.c    **** 
+ 146:Src/sdmm.c    **** 	d[0] = token;
+ 147:Src/sdmm.c    **** 	xmit_mmc(d, 1);				/* Xmit a token */
+ 148:Src/sdmm.c    **** 	if (token != 0xFD) {		/* Is it data token? */
+ 149:Src/sdmm.c    **** 		xmit_mmc(buff, 512);	/* Xmit the 512 byte data block to MMC */
+ 150:Src/sdmm.c    **** 		rcvr_mmc(d, 2);			/* Xmit dummy CRC (0xFF,0xFF) */
+ 151:Src/sdmm.c    **** 		rcvr_mmc(d, 1);			/* Receive data response */
+ 152:Src/sdmm.c    **** 		if ((d[0] & 0x1F) != 0x05)	/* If not accepted, return with error */
+ 153:Src/sdmm.c    **** 			return 0;
+ 154:Src/sdmm.c    **** 	}
+ 155:Src/sdmm.c    **** 
+ 156:Src/sdmm.c    **** 	return 1;
+ 157:Src/sdmm.c    **** }
+ 256              		.loc 1 157 1 view .LVU52
+ 257 000e 03B0     		add	sp, sp, #12
+ 258              	.LCFI8:
+ 259              		.cfi_remember_state
+ 260              		.cfi_def_cfa_offset 12
+ 261              		@ sp needed
+ 262 0010 30BD     		pop	{r4, r5, pc}
+ 263              	.LVL21:
+ 264              	.L23:
+ 265              	.LCFI9:
+ 266              		.cfi_restore_state
+ 146:Src/sdmm.c    **** 	xmit_mmc(d, 1);				/* Xmit a token */
+ 267              		.loc 1 146 2 is_stmt 1 view .LVU53
+ 146:Src/sdmm.c    **** 	xmit_mmc(d, 1);				/* Xmit a token */
+ 268              		.loc 1 146 7 is_stmt 0 view .LVU54
+ 269 0012 8DF80440 		strb	r4, [sp, #4]
+ 147:Src/sdmm.c    **** 	if (token != 0xFD) {		/* Is it data token? */
+ 270              		.loc 1 147 2 is_stmt 1 view .LVU55
+ 271 0016 0121     		movs	r1, #1
+ 272 0018 01A8     		add	r0, sp, #4
+ 273 001a FFF7FEFF 		bl	xmit_mmc
+ 274              	.LVL22:
+ 148:Src/sdmm.c    **** 		xmit_mmc(buff, 512);	/* Xmit the 512 byte data block to MMC */
+ 275              		.loc 1 148 2 view .LVU56
+ 148:Src/sdmm.c    **** 		xmit_mmc(buff, 512);	/* Xmit the 512 byte data block to MMC */
+ 276              		.loc 1 148 5 is_stmt 0 view .LVU57
+ 277 001e FD2C     		cmp	r4, #253
+ 278 0020 01D1     		bne	.L24
+ 156:Src/sdmm.c    **** }
+ 279              		.loc 1 156 9 view .LVU58
+ 280 0022 0120     		movs	r0, #1
+ 281 0024 F3E7     		b	.L18
+ 282              	.L24:
+ 149:Src/sdmm.c    **** 		rcvr_mmc(d, 2);			/* Xmit dummy CRC (0xFF,0xFF) */
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 9
+
+
+ 283              		.loc 1 149 3 is_stmt 1 view .LVU59
+ 284 0026 4FF40071 		mov	r1, #512
+ 285 002a 2846     		mov	r0, r5
+ 286 002c FFF7FEFF 		bl	xmit_mmc
+ 287              	.LVL23:
+ 150:Src/sdmm.c    **** 		rcvr_mmc(d, 1);			/* Receive data response */
+ 288              		.loc 1 150 3 view .LVU60
+ 289 0030 0221     		movs	r1, #2
+ 290 0032 01A8     		add	r0, sp, #4
+ 291 0034 FFF7FEFF 		bl	rcvr_mmc
+ 292              	.LVL24:
+ 151:Src/sdmm.c    **** 		if ((d[0] & 0x1F) != 0x05)	/* If not accepted, return with error */
+ 293              		.loc 1 151 3 view .LVU61
+ 294 0038 0121     		movs	r1, #1
+ 295 003a 01A8     		add	r0, sp, #4
+ 296 003c FFF7FEFF 		bl	rcvr_mmc
+ 297              	.LVL25:
+ 152:Src/sdmm.c    **** 			return 0;
+ 298              		.loc 1 152 3 view .LVU62
+ 152:Src/sdmm.c    **** 			return 0;
+ 299              		.loc 1 152 9 is_stmt 0 view .LVU63
+ 300 0040 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 152:Src/sdmm.c    **** 			return 0;
+ 301              		.loc 1 152 6 view .LVU64
+ 302 0044 03F01F03 		and	r3, r3, #31
+ 303 0048 052B     		cmp	r3, #5
+ 304 004a 01D1     		bne	.L21
+ 156:Src/sdmm.c    **** }
+ 305              		.loc 1 156 9 view .LVU65
+ 306 004c 0120     		movs	r0, #1
+ 307 004e DEE7     		b	.L18
+ 308              	.L21:
+ 153:Src/sdmm.c    **** 	}
+ 309              		.loc 1 153 11 view .LVU66
+ 310 0050 0020     		movs	r0, #0
+ 311 0052 DCE7     		b	.L18
+ 312              		.cfi_endproc
+ 313              	.LFE75:
+ 315              		.section	.text.rcvr_datablock,"ax",%progbits
+ 316              		.align	1
+ 317              		.syntax unified
+ 318              		.thumb
+ 319              		.thumb_func
+ 320              		.fpu softvfp
+ 322              	rcvr_datablock:
+ 323              	.LVL26:
+ 324              	.LFB74:
+ 111:Src/sdmm.c    **** 	BYTE d[2];
+ 325              		.loc 1 111 1 is_stmt 1 view -0
+ 326              		.cfi_startproc
+ 327              		@ args = 0, pretend = 0, frame = 8
+ 328              		@ frame_needed = 0, uses_anonymous_args = 0
+ 111:Src/sdmm.c    **** 	BYTE d[2];
+ 329              		.loc 1 111 1 is_stmt 0 view .LVU68
+ 330 0000 70B5     		push	{r4, r5, r6, lr}
+ 331              	.LCFI10:
+ 332              		.cfi_def_cfa_offset 16
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 10
+
+
+ 333              		.cfi_offset 4, -16
+ 334              		.cfi_offset 5, -12
+ 335              		.cfi_offset 6, -8
+ 336              		.cfi_offset 14, -4
+ 337 0002 82B0     		sub	sp, sp, #8
+ 338              	.LCFI11:
+ 339              		.cfi_def_cfa_offset 24
+ 340 0004 0546     		mov	r5, r0
+ 341 0006 0E46     		mov	r6, r1
+ 112:Src/sdmm.c    **** 	UINT tmr;
+ 342              		.loc 1 112 2 is_stmt 1 view .LVU69
+ 113:Src/sdmm.c    **** 
+ 343              		.loc 1 113 2 view .LVU70
+ 116:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 344              		.loc 1 116 2 view .LVU71
+ 345              	.LVL27:
+ 116:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 346              		.loc 1 116 11 is_stmt 0 view .LVU72
+ 347 0008 4FF47A74 		mov	r4, #1000
+ 348              	.LVL28:
+ 349              	.L26:
+ 116:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 350              		.loc 1 116 19 is_stmt 1 discriminator 1 view .LVU73
+ 116:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 351              		.loc 1 116 2 is_stmt 0 discriminator 1 view .LVU74
+ 352 000c 64B1     		cbz	r4, .L27
+ 117:Src/sdmm.c    **** 		if (d[0] != 0xFF) break;
+ 353              		.loc 1 117 3 is_stmt 1 view .LVU75
+ 354 000e 0121     		movs	r1, #1
+ 355 0010 01A8     		add	r0, sp, #4
+ 356 0012 FFF7FEFF 		bl	rcvr_mmc
+ 357              	.LVL29:
+ 118:Src/sdmm.c    **** 		dly_us(100);
+ 358              		.loc 1 118 3 view .LVU76
+ 118:Src/sdmm.c    **** 		dly_us(100);
+ 359              		.loc 1 118 8 is_stmt 0 view .LVU77
+ 360 0016 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 118:Src/sdmm.c    **** 		dly_us(100);
+ 361              		.loc 1 118 6 view .LVU78
+ 362 001a FF2B     		cmp	r3, #255
+ 363 001c 04D1     		bne	.L27
+ 119:Src/sdmm.c    **** 	}
+ 364              		.loc 1 119 3 is_stmt 1 discriminator 2 view .LVU79
+ 365 001e 6420     		movs	r0, #100
+ 366 0020 FFF7FEFF 		bl	dly_us
+ 367              	.LVL30:
+ 116:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 368              		.loc 1 116 24 discriminator 2 view .LVU80
+ 116:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 369              		.loc 1 116 27 is_stmt 0 discriminator 2 view .LVU81
+ 370 0024 013C     		subs	r4, r4, #1
+ 371              	.LVL31:
+ 116:Src/sdmm.c    **** 		rcvr_mmc(d, 1);
+ 372              		.loc 1 116 27 discriminator 2 view .LVU82
+ 373 0026 F1E7     		b	.L26
+ 374              	.L27:
+ 121:Src/sdmm.c    **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 11
+
+
+ 375              		.loc 1 121 2 is_stmt 1 view .LVU83
+ 121:Src/sdmm.c    **** 
+ 376              		.loc 1 121 7 is_stmt 0 view .LVU84
+ 377 0028 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 121:Src/sdmm.c    **** 
+ 378              		.loc 1 121 5 view .LVU85
+ 379 002c FE2B     		cmp	r3, #254
+ 380 002e 02D0     		beq	.L32
+ 121:Src/sdmm.c    **** 
+ 381              		.loc 1 121 27 view .LVU86
+ 382 0030 0020     		movs	r0, #0
+ 383              	.L25:
+ 127:Src/sdmm.c    **** 
+ 384              		.loc 1 127 1 view .LVU87
+ 385 0032 02B0     		add	sp, sp, #8
+ 386              	.LCFI12:
+ 387              		.cfi_remember_state
+ 388              		.cfi_def_cfa_offset 16
+ 389              		@ sp needed
+ 390 0034 70BD     		pop	{r4, r5, r6, pc}
+ 391              	.LVL32:
+ 392              	.L32:
+ 393              	.LCFI13:
+ 394              		.cfi_restore_state
+ 123:Src/sdmm.c    **** 	rcvr_mmc(d, 2);					/* Discard CRC */
+ 395              		.loc 1 123 2 is_stmt 1 view .LVU88
+ 396 0036 3146     		mov	r1, r6
+ 397 0038 2846     		mov	r0, r5
+ 398 003a FFF7FEFF 		bl	rcvr_mmc
+ 399              	.LVL33:
+ 124:Src/sdmm.c    **** 
+ 400              		.loc 1 124 2 view .LVU89
+ 401 003e 0221     		movs	r1, #2
+ 402 0040 01A8     		add	r0, sp, #4
+ 403 0042 FFF7FEFF 		bl	rcvr_mmc
+ 404              	.LVL34:
+ 126:Src/sdmm.c    **** }
+ 405              		.loc 1 126 2 view .LVU90
+ 126:Src/sdmm.c    **** }
+ 406              		.loc 1 126 9 is_stmt 0 view .LVU91
+ 407 0046 0120     		movs	r0, #1
+ 408 0048 F3E7     		b	.L25
+ 409              		.cfi_endproc
+ 410              	.LFE74:
+ 412              		.section	.text.deselect,"ax",%progbits
+ 413              		.align	1
+ 414              		.syntax unified
+ 415              		.thumb
+ 416              		.thumb_func
+ 417              		.fpu softvfp
+ 419              	deselect:
+ 420              	.LFB72:
+  74:Src/sdmm.c    **** 	BYTE d;
+ 421              		.loc 1 74 1 is_stmt 1 view -0
+ 422              		.cfi_startproc
+ 423              		@ args = 0, pretend = 0, frame = 8
+ 424              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 12
+
+
+ 425 0000 00B5     		push	{lr}
+ 426              	.LCFI14:
+ 427              		.cfi_def_cfa_offset 4
+ 428              		.cfi_offset 14, -4
+ 429 0002 83B0     		sub	sp, sp, #12
+ 430              	.LCFI15:
+ 431              		.cfi_def_cfa_offset 16
+  75:Src/sdmm.c    **** 
+ 432              		.loc 1 75 2 view .LVU93
+  77:Src/sdmm.c    **** 	rcvr_mmc(&d, 1);	/* Dummy clock (force DO hi-z for multiple slave SPI) */
+ 433              		.loc 1 77 2 view .LVU94
+ 434 0004 0122     		movs	r2, #1
+ 435 0006 1021     		movs	r1, #16
+ 436 0008 0548     		ldr	r0, .L35
+ 437 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 438              	.LVL35:
+  78:Src/sdmm.c    **** }
+ 439              		.loc 1 78 2 view .LVU95
+ 440 000e 0121     		movs	r1, #1
+ 441 0010 0DF10700 		add	r0, sp, #7
+ 442 0014 FFF7FEFF 		bl	rcvr_mmc
+ 443              	.LVL36:
+  79:Src/sdmm.c    **** 
+ 444              		.loc 1 79 1 is_stmt 0 view .LVU96
+ 445 0018 03B0     		add	sp, sp, #12
+ 446              	.LCFI16:
+ 447              		.cfi_def_cfa_offset 4
+ 448              		@ sp needed
+ 449 001a 5DF804FB 		ldr	pc, [sp], #4
+ 450              	.L36:
+ 451 001e 00BF     		.align	2
+ 452              	.L35:
+ 453 0020 00080140 		.word	1073809408
+ 454              		.cfi_endproc
+ 455              	.LFE72:
+ 457              		.section	.text.SD_select,"ax",%progbits
+ 458              		.align	1
+ 459              		.syntax unified
+ 460              		.thumb
+ 461              		.thumb_func
+ 462              		.fpu softvfp
+ 464              	SD_select:
+ 465              	.LFB73:
+  89:Src/sdmm.c    **** 	BYTE d;
+ 466              		.loc 1 89 1 is_stmt 1 view -0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 8
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470 0000 10B5     		push	{r4, lr}
+ 471              	.LCFI17:
+ 472              		.cfi_def_cfa_offset 8
+ 473              		.cfi_offset 4, -8
+ 474              		.cfi_offset 14, -4
+ 475 0002 82B0     		sub	sp, sp, #8
+ 476              	.LCFI18:
+ 477              		.cfi_def_cfa_offset 16
+  90:Src/sdmm.c    **** 
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 13
+
+
+ 478              		.loc 1 90 2 view .LVU98
+  92:Src/sdmm.c    **** 	rcvr_mmc(&d, 1);	/* Dummy clock (force DO enabled) */
+ 479              		.loc 1 92 2 view .LVU99
+ 480 0004 0022     		movs	r2, #0
+ 481 0006 1021     		movs	r1, #16
+ 482 0008 0948     		ldr	r0, .L42
+ 483 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 484              	.LVL37:
+  93:Src/sdmm.c    **** 	if (wait_ready()) return 1;	/* Wait for card ready */
+ 485              		.loc 1 93 2 view .LVU100
+ 486 000e 0121     		movs	r1, #1
+ 487 0010 0DF10700 		add	r0, sp, #7
+ 488 0014 FFF7FEFF 		bl	rcvr_mmc
+ 489              	.LVL38:
+  94:Src/sdmm.c    **** 
+ 490              		.loc 1 94 2 view .LVU101
+  94:Src/sdmm.c    **** 
+ 491              		.loc 1 94 6 is_stmt 0 view .LVU102
+ 492 0018 FFF7FEFF 		bl	wait_ready
+ 493              	.LVL39:
+  94:Src/sdmm.c    **** 
+ 494              		.loc 1 94 5 view .LVU103
+ 495 001c 18B1     		cbz	r0, .L41
+  94:Src/sdmm.c    **** 
+ 496              		.loc 1 94 27 view .LVU104
+ 497 001e 0124     		movs	r4, #1
+ 498              	.L37:
+  98:Src/sdmm.c    **** 
+ 499              		.loc 1 98 1 view .LVU105
+ 500 0020 2046     		mov	r0, r4
+ 501 0022 02B0     		add	sp, sp, #8
+ 502              	.LCFI19:
+ 503              		.cfi_remember_state
+ 504              		.cfi_def_cfa_offset 8
+ 505              		@ sp needed
+ 506 0024 10BD     		pop	{r4, pc}
+ 507              	.L41:
+ 508              	.LCFI20:
+ 509              		.cfi_restore_state
+ 510 0026 0446     		mov	r4, r0
+  96:Src/sdmm.c    **** 	return 0;			/* Failed */
+ 511              		.loc 1 96 2 is_stmt 1 view .LVU106
+ 512 0028 FFF7FEFF 		bl	deselect
+ 513              	.LVL40:
+  97:Src/sdmm.c    **** }
+ 514              		.loc 1 97 2 view .LVU107
+  97:Src/sdmm.c    **** }
+ 515              		.loc 1 97 9 is_stmt 0 view .LVU108
+ 516 002c F8E7     		b	.L37
+ 517              	.L43:
+ 518 002e 00BF     		.align	2
+ 519              	.L42:
+ 520 0030 00080140 		.word	1073809408
+ 521              		.cfi_endproc
+ 522              	.LFE73:
+ 524              		.section	.text.send_cmd,"ax",%progbits
+ 525              		.align	1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 14
+
+
+ 526              		.syntax unified
+ 527              		.thumb
+ 528              		.thumb_func
+ 529              		.fpu softvfp
+ 531              	send_cmd:
+ 532              	.LVL41:
+ 533              	.LFB76:
+ 158:Src/sdmm.c    **** 
+ 159:Src/sdmm.c    **** 
+ 160:Src/sdmm.c    **** 
+ 161:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 162:Src/sdmm.c    **** /* Send a command packet to the card                                     */
+ 163:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 164:Src/sdmm.c    **** 
+ 165:Src/sdmm.c    **** static
+ 166:Src/sdmm.c    **** BYTE send_cmd (		/* Returns command response (bit7==1:Send failed)*/
+ 167:Src/sdmm.c    **** 	BYTE cmd,		/* Command byte */
+ 168:Src/sdmm.c    **** 	DWORD arg		/* Argument */
+ 169:Src/sdmm.c    **** )
+ 170:Src/sdmm.c    **** {
+ 534              		.loc 1 170 1 is_stmt 1 view -0
+ 535              		.cfi_startproc
+ 536              		@ args = 0, pretend = 0, frame = 8
+ 537              		@ frame_needed = 0, uses_anonymous_args = 0
+ 538              		.loc 1 170 1 is_stmt 0 view .LVU110
+ 539 0000 30B5     		push	{r4, r5, lr}
+ 540              	.LCFI21:
+ 541              		.cfi_def_cfa_offset 12
+ 542              		.cfi_offset 4, -12
+ 543              		.cfi_offset 5, -8
+ 544              		.cfi_offset 14, -4
+ 545 0002 83B0     		sub	sp, sp, #12
+ 546              	.LCFI22:
+ 547              		.cfi_def_cfa_offset 24
+ 548 0004 0446     		mov	r4, r0
+ 549 0006 0D46     		mov	r5, r1
+ 171:Src/sdmm.c    **** 	BYTE n, d, buf[6];
+ 550              		.loc 1 171 2 is_stmt 1 view .LVU111
+ 172:Src/sdmm.c    **** 
+ 173:Src/sdmm.c    **** 
+ 174:Src/sdmm.c    **** 	if (cmd & 0x80) {	/* ACMD<n> is the command sequense of CMD55-CMD<n> */
+ 551              		.loc 1 174 2 view .LVU112
+ 552              		.loc 1 174 5 is_stmt 0 view .LVU113
+ 553 0008 10F0800F 		tst	r0, #128
+ 554 000c 30D1     		bne	.L56
+ 555              	.LVL42:
+ 556              	.L45:
+ 175:Src/sdmm.c    **** 		cmd &= 0x7F;
+ 176:Src/sdmm.c    **** 		n = send_cmd(CMD55, 0);
+ 177:Src/sdmm.c    **** 		if (n > 1) return n;
+ 178:Src/sdmm.c    **** 	}
+ 179:Src/sdmm.c    **** 
+ 180:Src/sdmm.c    **** 	/* Select the card and wait for ready except to stop multiple block read */
+ 181:Src/sdmm.c    **** 	if (cmd != CMD12) {
+ 557              		.loc 1 181 2 is_stmt 1 view .LVU114
+ 558              		.loc 1 181 5 is_stmt 0 view .LVU115
+ 559 000e 0C2C     		cmp	r4, #12
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 15
+
+
+ 560 0010 37D1     		bne	.L57
+ 561              	.L47:
+ 182:Src/sdmm.c    **** 		deselect();
+ 183:Src/sdmm.c    **** 		if (!SD_select()) return 0xFF;
+ 184:Src/sdmm.c    **** 	}
+ 185:Src/sdmm.c    **** 
+ 186:Src/sdmm.c    **** 	/* Send a command packet */
+ 187:Src/sdmm.c    **** 	buf[0] = 0x40 | cmd;			/* Start + Command index */
+ 562              		.loc 1 187 2 is_stmt 1 view .LVU116
+ 563              		.loc 1 187 9 is_stmt 0 view .LVU117
+ 564 0012 44F04003 		orr	r3, r4, #64
+ 565 0016 8DF80030 		strb	r3, [sp]
+ 188:Src/sdmm.c    **** 	buf[1] = (BYTE)(arg >> 24);		/* Argument[31..24] */
+ 566              		.loc 1 188 2 is_stmt 1 view .LVU118
+ 567              		.loc 1 188 11 is_stmt 0 view .LVU119
+ 568 001a 2B0E     		lsrs	r3, r5, #24
+ 569              		.loc 1 188 9 view .LVU120
+ 570 001c 8DF80130 		strb	r3, [sp, #1]
+ 189:Src/sdmm.c    **** 	buf[2] = (BYTE)(arg >> 16);		/* Argument[23..16] */
+ 571              		.loc 1 189 2 is_stmt 1 view .LVU121
+ 572              		.loc 1 189 11 is_stmt 0 view .LVU122
+ 573 0020 C5F30743 		ubfx	r3, r5, #16, #8
+ 574              		.loc 1 189 9 view .LVU123
+ 575 0024 8DF80230 		strb	r3, [sp, #2]
+ 190:Src/sdmm.c    **** 	buf[3] = (BYTE)(arg >> 8);		/* Argument[15..8] */
+ 576              		.loc 1 190 2 is_stmt 1 view .LVU124
+ 577              		.loc 1 190 11 is_stmt 0 view .LVU125
+ 578 0028 C5F30723 		ubfx	r3, r5, #8, #8
+ 579              		.loc 1 190 9 view .LVU126
+ 580 002c 8DF80330 		strb	r3, [sp, #3]
+ 191:Src/sdmm.c    **** 	buf[4] = (BYTE)arg;				/* Argument[7..0] */
+ 581              		.loc 1 191 2 is_stmt 1 view .LVU127
+ 582              		.loc 1 191 9 is_stmt 0 view .LVU128
+ 583 0030 8DF80450 		strb	r5, [sp, #4]
+ 192:Src/sdmm.c    **** 	n = 0x01;						/* Dummy CRC + Stop */
+ 584              		.loc 1 192 2 is_stmt 1 view .LVU129
+ 585              	.LVL43:
+ 193:Src/sdmm.c    **** 	if (cmd == CMD0) n = 0x95;		/* (valid CRC for CMD0(0)) */
+ 586              		.loc 1 193 2 view .LVU130
+ 587              		.loc 1 193 5 is_stmt 0 view .LVU131
+ 588 0034 6CB3     		cbz	r4, .L53
+ 192:Src/sdmm.c    **** 	n = 0x01;						/* Dummy CRC + Stop */
+ 589              		.loc 1 192 4 view .LVU132
+ 590 0036 0123     		movs	r3, #1
+ 591              	.L48:
+ 592              	.LVL44:
+ 194:Src/sdmm.c    **** 	if (cmd == CMD8) n = 0x87;		/* (valid CRC for CMD8(0x1AA)) */
+ 593              		.loc 1 194 2 is_stmt 1 view .LVU133
+ 594              		.loc 1 194 5 is_stmt 0 view .LVU134
+ 595 0038 082C     		cmp	r4, #8
+ 596 003a 2CD0     		beq	.L58
+ 597              	.LVL45:
+ 598              	.L49:
+ 195:Src/sdmm.c    **** 	buf[5] = n;
+ 599              		.loc 1 195 2 is_stmt 1 view .LVU135
+ 600              		.loc 1 195 9 is_stmt 0 view .LVU136
+ 601 003c 8DF80530 		strb	r3, [sp, #5]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 16
+
+
+ 196:Src/sdmm.c    **** 	xmit_mmc(buf, 6);
+ 602              		.loc 1 196 2 is_stmt 1 view .LVU137
+ 603 0040 0621     		movs	r1, #6
+ 604 0042 6846     		mov	r0, sp
+ 605 0044 FFF7FEFF 		bl	xmit_mmc
+ 606              	.LVL46:
+ 197:Src/sdmm.c    **** 
+ 198:Src/sdmm.c    **** 	/* Receive command response */
+ 199:Src/sdmm.c    **** 	if (cmd == CMD12) rcvr_mmc(&d, 1);	/* Skip a stuff byte when stop reading */
+ 607              		.loc 1 199 2 view .LVU138
+ 608              		.loc 1 199 5 is_stmt 0 view .LVU139
+ 609 0048 0C2C     		cmp	r4, #12
+ 610 004a 26D0     		beq	.L59
+ 611              	.L50:
+ 194:Src/sdmm.c    **** 	buf[5] = n;
+ 612              		.loc 1 194 21 discriminator 2 view .LVU140
+ 613 004c 0A24     		movs	r4, #10
+ 614              	.LVL47:
+ 615              	.L51:
+ 200:Src/sdmm.c    **** 	n = 10;								/* Wait for a valid response in timeout of 10 attempts */
+ 201:Src/sdmm.c    **** 	do
+ 616              		.loc 1 201 2 is_stmt 1 discriminator 2 view .LVU141
+ 202:Src/sdmm.c    **** 		rcvr_mmc(&d, 1);
+ 617              		.loc 1 202 3 discriminator 2 view .LVU142
+ 618 004e 0121     		movs	r1, #1
+ 619 0050 0DF10700 		add	r0, sp, #7
+ 620 0054 FFF7FEFF 		bl	rcvr_mmc
+ 621              	.LVL48:
+ 203:Src/sdmm.c    **** 	while ((d & 0x80) && --n);
+ 622              		.loc 1 203 8 discriminator 2 view .LVU143
+ 623              		.loc 1 203 9 is_stmt 0 discriminator 2 view .LVU144
+ 624 0058 9DF80700 		ldrb	r0, [sp, #7]	@ zero_extendqisi2
+ 625 005c 9DF90730 		ldrsb	r3, [sp, #7]
+ 626              		.loc 1 203 2 discriminator 2 view .LVU145
+ 627 0060 002B     		cmp	r3, #0
+ 628 0062 03DA     		bge	.L46
+ 629              		.loc 1 203 20 discriminator 1 view .LVU146
+ 630 0064 631E     		subs	r3, r4, #1
+ 631              	.LVL49:
+ 632              		.loc 1 203 20 discriminator 1 view .LVU147
+ 633 0066 13F0FF04 		ands	r4, r3, #255
+ 634 006a F0D1     		bne	.L51
+ 635              	.LVL50:
+ 636              	.L46:
+ 204:Src/sdmm.c    **** 
+ 205:Src/sdmm.c    **** 	return d;			/* Return with the response value */
+ 206:Src/sdmm.c    **** }
+ 637              		.loc 1 206 1 view .LVU148
+ 638 006c 03B0     		add	sp, sp, #12
+ 639              	.LCFI23:
+ 640              		.cfi_remember_state
+ 641              		.cfi_def_cfa_offset 12
+ 642              		@ sp needed
+ 643 006e 30BD     		pop	{r4, r5, pc}
+ 644              	.LVL51:
+ 645              	.L56:
+ 646              	.LCFI24:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 17
+
+
+ 647              		.cfi_restore_state
+ 175:Src/sdmm.c    **** 		n = send_cmd(CMD55, 0);
+ 648              		.loc 1 175 3 is_stmt 1 view .LVU149
+ 175:Src/sdmm.c    **** 		n = send_cmd(CMD55, 0);
+ 649              		.loc 1 175 7 is_stmt 0 view .LVU150
+ 650 0070 00F07F04 		and	r4, r0, #127
+ 651              	.LVL52:
+ 176:Src/sdmm.c    **** 		if (n > 1) return n;
+ 652              		.loc 1 176 3 is_stmt 1 view .LVU151
+ 176:Src/sdmm.c    **** 		if (n > 1) return n;
+ 653              		.loc 1 176 7 is_stmt 0 view .LVU152
+ 654 0074 0021     		movs	r1, #0
+ 655              	.LVL53:
+ 176:Src/sdmm.c    **** 		if (n > 1) return n;
+ 656              		.loc 1 176 7 view .LVU153
+ 657 0076 3720     		movs	r0, #55
+ 658 0078 FFF7C2FF 		bl	send_cmd
+ 659              	.LVL54:
+ 177:Src/sdmm.c    **** 	}
+ 660              		.loc 1 177 3 is_stmt 1 view .LVU154
+ 177:Src/sdmm.c    **** 	}
+ 661              		.loc 1 177 6 is_stmt 0 view .LVU155
+ 662 007c 0128     		cmp	r0, #1
+ 663 007e C6D9     		bls	.L45
+ 664 0080 F4E7     		b	.L46
+ 665              	.LVL55:
+ 666              	.L57:
+ 182:Src/sdmm.c    **** 		if (!SD_select()) return 0xFF;
+ 667              		.loc 1 182 3 is_stmt 1 view .LVU156
+ 668 0082 FFF7FEFF 		bl	deselect
+ 669              	.LVL56:
+ 183:Src/sdmm.c    **** 	}
+ 670              		.loc 1 183 3 view .LVU157
+ 183:Src/sdmm.c    **** 	}
+ 671              		.loc 1 183 8 is_stmt 0 view .LVU158
+ 672 0086 FFF7FEFF 		bl	SD_select
+ 673              	.LVL57:
+ 183:Src/sdmm.c    **** 	}
+ 674              		.loc 1 183 6 view .LVU159
+ 675 008a 0028     		cmp	r0, #0
+ 676 008c C1D1     		bne	.L47
+ 183:Src/sdmm.c    **** 	}
+ 677              		.loc 1 183 28 view .LVU160
+ 678 008e FF20     		movs	r0, #255
+ 679 0090 ECE7     		b	.L46
+ 680              	.LVL58:
+ 681              	.L53:
+ 193:Src/sdmm.c    **** 	if (cmd == CMD8) n = 0x87;		/* (valid CRC for CMD8(0x1AA)) */
+ 682              		.loc 1 193 21 view .LVU161
+ 683 0092 9523     		movs	r3, #149
+ 684 0094 D0E7     		b	.L48
+ 685              	.LVL59:
+ 686              	.L58:
+ 194:Src/sdmm.c    **** 	buf[5] = n;
+ 687              		.loc 1 194 21 view .LVU162
+ 688 0096 8723     		movs	r3, #135
+ 689              	.LVL60:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 18
+
+
+ 194:Src/sdmm.c    **** 	buf[5] = n;
+ 690              		.loc 1 194 21 view .LVU163
+ 691 0098 D0E7     		b	.L49
+ 692              	.L59:
+ 199:Src/sdmm.c    **** 	n = 10;								/* Wait for a valid response in timeout of 10 attempts */
+ 693              		.loc 1 199 20 is_stmt 1 discriminator 1 view .LVU164
+ 694 009a 0121     		movs	r1, #1
+ 695 009c 0DF10700 		add	r0, sp, #7
+ 696 00a0 FFF7FEFF 		bl	rcvr_mmc
+ 697              	.LVL61:
+ 698 00a4 D2E7     		b	.L50
+ 699              		.cfi_endproc
+ 700              	.LFE76:
+ 702              		.section	.text.disk_status,"ax",%progbits
+ 703              		.align	1
+ 704              		.global	disk_status
+ 705              		.syntax unified
+ 706              		.thumb
+ 707              		.thumb_func
+ 708              		.fpu softvfp
+ 710              	disk_status:
+ 711              	.LVL62:
+ 712              	.LFB77:
+ 207:Src/sdmm.c    **** 
+ 208:Src/sdmm.c    **** 
+ 209:Src/sdmm.c    **** 
+ 210:Src/sdmm.c    **** /*--------------------------------------------------------------------------
+ 211:Src/sdmm.c    **** 
+ 212:Src/sdmm.c    ****    Public Functions
+ 213:Src/sdmm.c    **** 
+ 214:Src/sdmm.c    **** ---------------------------------------------------------------------------*/
+ 215:Src/sdmm.c    **** 
+ 216:Src/sdmm.c    **** 
+ 217:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 218:Src/sdmm.c    **** /* Get Disk Status                                                       */
+ 219:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 220:Src/sdmm.c    **** 
+ 221:Src/sdmm.c    **** DSTATUS disk_status (
+ 222:Src/sdmm.c    **** 	BYTE drv			/* Drive number (always 0) */
+ 223:Src/sdmm.c    **** )
+ 224:Src/sdmm.c    **** {
+ 713              		.loc 1 224 1 view -0
+ 714              		.cfi_startproc
+ 715              		@ args = 0, pretend = 0, frame = 0
+ 716              		@ frame_needed = 0, uses_anonymous_args = 0
+ 717              		@ link register save eliminated.
+ 225:Src/sdmm.c    **** 	if (drv) return STA_NOINIT;
+ 718              		.loc 1 225 2 view .LVU166
+ 719              		.loc 1 225 5 is_stmt 0 view .LVU167
+ 720 0000 10B9     		cbnz	r0, .L62
+ 226:Src/sdmm.c    **** 
+ 227:Src/sdmm.c    **** 	return Stat;
+ 721              		.loc 1 227 2 is_stmt 1 view .LVU168
+ 722              		.loc 1 227 9 is_stmt 0 view .LVU169
+ 723 0002 024B     		ldr	r3, .L63
+ 724 0004 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 725              	.LVL63:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 19
+
+
+ 726              		.loc 1 227 9 view .LVU170
+ 727 0006 7047     		bx	lr
+ 728              	.LVL64:
+ 729              	.L62:
+ 225:Src/sdmm.c    **** 	if (drv) return STA_NOINIT;
+ 730              		.loc 1 225 18 view .LVU171
+ 731 0008 0120     		movs	r0, #1
+ 732              	.LVL65:
+ 228:Src/sdmm.c    **** }
+ 733              		.loc 1 228 1 view .LVU172
+ 734 000a 7047     		bx	lr
+ 735              	.L64:
+ 736              		.align	2
+ 737              	.L63:
+ 738 000c 00000000 		.word	.LANCHOR0
+ 739              		.cfi_endproc
+ 740              	.LFE77:
+ 742              		.section	.text.disk_initialize,"ax",%progbits
+ 743              		.align	1
+ 744              		.global	disk_initialize
+ 745              		.syntax unified
+ 746              		.thumb
+ 747              		.thumb_func
+ 748              		.fpu softvfp
+ 750              	disk_initialize:
+ 751              	.LVL66:
+ 752              	.LFB78:
+ 229:Src/sdmm.c    **** 
+ 230:Src/sdmm.c    **** 
+ 231:Src/sdmm.c    **** 
+ 232:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 233:Src/sdmm.c    **** /* Initialize Disk Drive                                                 */
+ 234:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 235:Src/sdmm.c    **** 
+ 236:Src/sdmm.c    **** DSTATUS disk_initialize (
+ 237:Src/sdmm.c    **** 	BYTE drv		/* Physical drive nmuber (0) */
+ 238:Src/sdmm.c    **** )
+ 239:Src/sdmm.c    **** {
+ 753              		.loc 1 239 1 is_stmt 1 view -0
+ 754              		.cfi_startproc
+ 755              		@ args = 0, pretend = 0, frame = 8
+ 756              		@ frame_needed = 0, uses_anonymous_args = 0
+ 757              		.loc 1 239 1 is_stmt 0 view .LVU174
+ 758 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 759              	.LCFI25:
+ 760              		.cfi_def_cfa_offset 20
+ 761              		.cfi_offset 4, -20
+ 762              		.cfi_offset 5, -16
+ 763              		.cfi_offset 6, -12
+ 764              		.cfi_offset 7, -8
+ 765              		.cfi_offset 14, -4
+ 766 0002 83B0     		sub	sp, sp, #12
+ 767              	.LCFI26:
+ 768              		.cfi_def_cfa_offset 32
+ 240:Src/sdmm.c    **** 	BYTE n, ty, cmd, buf[4];
+ 769              		.loc 1 240 2 is_stmt 1 view .LVU175
+ 241:Src/sdmm.c    **** 	UINT tmr;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 20
+
+
+ 770              		.loc 1 241 2 view .LVU176
+ 242:Src/sdmm.c    **** 	DSTATUS s;
+ 771              		.loc 1 242 2 view .LVU177
+ 243:Src/sdmm.c    **** 
+ 244:Src/sdmm.c    **** 
+ 245:Src/sdmm.c    **** 	if (drv) return RES_NOTRDY;
+ 772              		.loc 1 245 2 view .LVU178
+ 773              		.loc 1 245 5 is_stmt 0 view .LVU179
+ 774 0004 0028     		cmp	r0, #0
+ 775 0006 40F08280 		bne	.L78
+ 246:Src/sdmm.c    **** 
+ 247:Src/sdmm.c    **** 	dly_us(10000);			/* 10ms */
+ 776              		.loc 1 247 2 is_stmt 1 view .LVU180
+ 777 000a 42F21070 		movw	r0, #10000
+ 778              	.LVL67:
+ 779              		.loc 1 247 2 is_stmt 0 view .LVU181
+ 780 000e FFF7FEFF 		bl	dly_us
+ 781              	.LVL68:
+ 248:Src/sdmm.c    **** 	spi_init(&hspi1, SPI1);
+ 782              		.loc 1 248 2 is_stmt 1 view .LVU182
+ 783 0012 4049     		ldr	r1, .L86
+ 784 0014 4048     		ldr	r0, .L86+4
+ 785 0016 FFF7FEFF 		bl	spi_init
+ 786              	.LVL69:
+ 249:Src/sdmm.c    **** 
+ 250:Src/sdmm.c    **** 	for (n = 10; n; n--) rcvr_mmc(buf, 1);	/* Apply 80 dummy clocks and the card gets ready to receive
+ 787              		.loc 1 250 2 view .LVU183
+ 788              		.loc 1 250 9 is_stmt 0 view .LVU184
+ 789 001a 0A24     		movs	r4, #10
+ 790              		.loc 1 250 2 view .LVU185
+ 791 001c 05E0     		b	.L67
+ 792              	.LVL70:
+ 793              	.L68:
+ 794              		.loc 1 250 23 is_stmt 1 discriminator 3 view .LVU186
+ 795 001e 0121     		movs	r1, #1
+ 796 0020 01A8     		add	r0, sp, #4
+ 797 0022 FFF7FEFF 		bl	rcvr_mmc
+ 798              	.LVL71:
+ 799              		.loc 1 250 18 discriminator 3 view .LVU187
+ 800              		.loc 1 250 19 is_stmt 0 discriminator 3 view .LVU188
+ 801 0026 013C     		subs	r4, r4, #1
+ 802              	.LVL72:
+ 803              		.loc 1 250 19 discriminator 3 view .LVU189
+ 804 0028 E4B2     		uxtb	r4, r4
+ 805              	.LVL73:
+ 806              	.L67:
+ 807              		.loc 1 250 15 is_stmt 1 discriminator 1 view .LVU190
+ 808              		.loc 1 250 2 is_stmt 0 discriminator 1 view .LVU191
+ 809 002a 002C     		cmp	r4, #0
+ 810 002c F7D1     		bne	.L68
+ 251:Src/sdmm.c    **** 
+ 252:Src/sdmm.c    **** 	ty = 0;
+ 811              		.loc 1 252 2 is_stmt 1 view .LVU192
+ 812              	.LVL74:
+ 253:Src/sdmm.c    **** 	if (send_cmd(CMD0, 0) == 1) {			/* Enter Idle state */
+ 813              		.loc 1 253 2 view .LVU193
+ 814              		.loc 1 253 6 is_stmt 0 view .LVU194
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 21
+
+
+ 815 002e 0021     		movs	r1, #0
+ 816 0030 0846     		mov	r0, r1
+ 817 0032 FFF7FEFF 		bl	send_cmd
+ 818              	.LVL75:
+ 819 0036 0646     		mov	r6, r0
+ 820              		.loc 1 253 5 view .LVU195
+ 821 0038 0128     		cmp	r0, #1
+ 822 003a 0BD0     		beq	.L83
+ 823              	.LVL76:
+ 824              	.L69:
+ 254:Src/sdmm.c    **** 		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
+ 255:Src/sdmm.c    **** 			rcvr_mmc(buf, 4);							/* Get trailing return value of R7 resp */
+ 256:Src/sdmm.c    **** 			if (buf[2] == 0x01 && buf[3] == 0xAA) {		/* The card can work at vdd range of 2.7-3.6V */
+ 257:Src/sdmm.c    **** 				for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state (ACMD41 with HCS bit) */
+ 258:Src/sdmm.c    **** 					if (send_cmd(ACMD41, 1UL << 30) == 0) break;
+ 259:Src/sdmm.c    **** 					dly_us(1000);
+ 260:Src/sdmm.c    **** 				}
+ 261:Src/sdmm.c    **** 				if (tmr && send_cmd(CMD58, 0) == 0) {	/* Check CCS bit in the OCR */
+ 262:Src/sdmm.c    **** 					rcvr_mmc(buf, 4);
+ 263:Src/sdmm.c    **** 					ty = (buf[0] & 0x40) ? CT_SDC2 | CT_BLOCK : CT_SDC2;	/* SDv2+ */
+ 264:Src/sdmm.c    **** 				}
+ 265:Src/sdmm.c    **** 			}
+ 266:Src/sdmm.c    **** 		} else {							/* SDv1 or MMCv3 */
+ 267:Src/sdmm.c    **** 			if (send_cmd(ACMD41, 0) <= 1) 	{
+ 268:Src/sdmm.c    **** 				ty = CT_SDC2; cmd = ACMD41;	/* SDv1 */
+ 269:Src/sdmm.c    **** 			} else {
+ 270:Src/sdmm.c    **** 				ty = CT_MMC3; cmd = CMD1;	/* MMCv3 */
+ 271:Src/sdmm.c    **** 			}
+ 272:Src/sdmm.c    **** 			for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state */
+ 273:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ 274:Src/sdmm.c    **** 				dly_us(1000);
+ 275:Src/sdmm.c    **** 			}
+ 276:Src/sdmm.c    **** 			if (!tmr || send_cmd(CMD16, 512) != 0)	/* Set R/W block length to 512 */
+ 277:Src/sdmm.c    **** 				ty = 0;
+ 278:Src/sdmm.c    **** 		}
+ 279:Src/sdmm.c    **** 	}
+ 280:Src/sdmm.c    **** 	CardType = ty;
+ 825              		.loc 1 280 2 is_stmt 1 view .LVU196
+ 826              		.loc 1 280 11 is_stmt 0 view .LVU197
+ 827 003c 374B     		ldr	r3, .L86+8
+ 828 003e 1C70     		strb	r4, [r3]
+ 281:Src/sdmm.c    **** 	s = ty ? 0 : STA_NOINIT;
+ 829              		.loc 1 281 2 is_stmt 1 view .LVU198
+ 830              		.loc 1 281 13 is_stmt 0 view .LVU199
+ 831 0040 B4FA84F4 		clz	r4, r4
+ 832              	.LVL77:
+ 833              		.loc 1 281 13 view .LVU200
+ 834 0044 6409     		lsrs	r4, r4, #5
+ 835              	.LVL78:
+ 282:Src/sdmm.c    **** 	Stat = s;
+ 836              		.loc 1 282 2 is_stmt 1 view .LVU201
+ 837              		.loc 1 282 7 is_stmt 0 view .LVU202
+ 838 0046 364B     		ldr	r3, .L86+12
+ 839              		.loc 1 282 7 view .LVU203
+ 840 0048 1C70     		strb	r4, [r3]
+ 283:Src/sdmm.c    **** 
+ 284:Src/sdmm.c    **** 	deselect();
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 22
+
+
+ 841              		.loc 1 284 2 is_stmt 1 view .LVU204
+ 842 004a FFF7FEFF 		bl	deselect
+ 843              	.LVL79:
+ 285:Src/sdmm.c    **** 
+ 286:Src/sdmm.c    **** 	return s;
+ 844              		.loc 1 286 2 view .LVU205
+ 845              	.L66:
+ 287:Src/sdmm.c    **** }
+ 846              		.loc 1 287 1 is_stmt 0 view .LVU206
+ 847 004e 2046     		mov	r0, r4
+ 848 0050 03B0     		add	sp, sp, #12
+ 849              	.LCFI27:
+ 850              		.cfi_remember_state
+ 851              		.cfi_def_cfa_offset 20
+ 852              		@ sp needed
+ 853 0052 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 854              	.LVL80:
+ 855              	.L83:
+ 856              	.LCFI28:
+ 857              		.cfi_restore_state
+ 254:Src/sdmm.c    **** 			rcvr_mmc(buf, 4);							/* Get trailing return value of R7 resp */
+ 858              		.loc 1 254 3 is_stmt 1 view .LVU207
+ 254:Src/sdmm.c    **** 			rcvr_mmc(buf, 4);							/* Get trailing return value of R7 resp */
+ 859              		.loc 1 254 7 is_stmt 0 view .LVU208
+ 860 0054 4FF4D571 		mov	r1, #426
+ 861 0058 0820     		movs	r0, #8
+ 862 005a FFF7FEFF 		bl	send_cmd
+ 863              	.LVL81:
+ 254:Src/sdmm.c    **** 			rcvr_mmc(buf, 4);							/* Get trailing return value of R7 resp */
+ 864              		.loc 1 254 6 view .LVU209
+ 865 005e 0128     		cmp	r0, #1
+ 866 0060 15D0     		beq	.L84
+ 267:Src/sdmm.c    **** 				ty = CT_SDC2; cmd = ACMD41;	/* SDv1 */
+ 867              		.loc 1 267 4 is_stmt 1 view .LVU210
+ 267:Src/sdmm.c    **** 				ty = CT_SDC2; cmd = ACMD41;	/* SDv1 */
+ 868              		.loc 1 267 8 is_stmt 0 view .LVU211
+ 869 0062 0021     		movs	r1, #0
+ 870 0064 A920     		movs	r0, #169
+ 871 0066 FFF7FEFF 		bl	send_cmd
+ 872              	.LVL82:
+ 267:Src/sdmm.c    **** 				ty = CT_SDC2; cmd = ACMD41;	/* SDv1 */
+ 873              		.loc 1 267 7 view .LVU212
+ 874 006a 0128     		cmp	r0, #1
+ 875 006c 3FD9     		bls	.L85
+ 270:Src/sdmm.c    **** 			}
+ 876              		.loc 1 270 23 view .LVU213
+ 877 006e 3746     		mov	r7, r6
+ 878              	.L74:
+ 879              	.LVL83:
+ 272:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ 880              		.loc 1 272 4 is_stmt 1 view .LVU214
+ 272:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ 881              		.loc 1 272 13 is_stmt 0 view .LVU215
+ 882 0070 4FF47A75 		mov	r5, #1000
+ 883              	.LVL84:
+ 884              	.L75:
+ 272:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 23
+
+
+ 885              		.loc 1 272 21 is_stmt 1 discriminator 1 view .LVU216
+ 272:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ 886              		.loc 1 272 4 is_stmt 0 discriminator 1 view .LVU217
+ 887 0074 002D     		cmp	r5, #0
+ 888 0076 3DD0     		beq	.L76
+ 273:Src/sdmm.c    **** 				dly_us(1000);
+ 889              		.loc 1 273 5 is_stmt 1 view .LVU218
+ 273:Src/sdmm.c    **** 				dly_us(1000);
+ 890              		.loc 1 273 9 is_stmt 0 view .LVU219
+ 891 0078 0021     		movs	r1, #0
+ 892 007a 3846     		mov	r0, r7
+ 893 007c FFF7FEFF 		bl	send_cmd
+ 894              	.LVL85:
+ 273:Src/sdmm.c    **** 				dly_us(1000);
+ 895              		.loc 1 273 8 view .LVU220
+ 896 0080 C0B3     		cbz	r0, .L76
+ 274:Src/sdmm.c    **** 			}
+ 897              		.loc 1 274 5 is_stmt 1 discriminator 2 view .LVU221
+ 898 0082 4FF47A70 		mov	r0, #1000
+ 899 0086 FFF7FEFF 		bl	dly_us
+ 900              	.LVL86:
+ 272:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ 901              		.loc 1 272 26 discriminator 2 view .LVU222
+ 272:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ 902              		.loc 1 272 29 is_stmt 0 discriminator 2 view .LVU223
+ 903 008a 013D     		subs	r5, r5, #1
+ 904              	.LVL87:
+ 272:Src/sdmm.c    **** 				if (send_cmd(cmd, 0) == 0) break;
+ 905              		.loc 1 272 29 discriminator 2 view .LVU224
+ 906 008c F2E7     		b	.L75
+ 907              	.LVL88:
+ 908              	.L84:
+ 255:Src/sdmm.c    **** 			if (buf[2] == 0x01 && buf[3] == 0xAA) {		/* The card can work at vdd range of 2.7-3.6V */
+ 909              		.loc 1 255 4 is_stmt 1 view .LVU225
+ 910 008e 0421     		movs	r1, #4
+ 911 0090 0DEB0100 		add	r0, sp, r1
+ 912 0094 FFF7FEFF 		bl	rcvr_mmc
+ 913              	.LVL89:
+ 256:Src/sdmm.c    **** 				for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state (ACMD41 with HCS bit) */
+ 914              		.loc 1 256 4 view .LVU226
+ 256:Src/sdmm.c    **** 				for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state (ACMD41 with HCS bit) */
+ 915              		.loc 1 256 11 is_stmt 0 view .LVU227
+ 916 0098 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+ 256:Src/sdmm.c    **** 				for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state (ACMD41 with HCS bit) */
+ 917              		.loc 1 256 7 view .LVU228
+ 918 009c 012B     		cmp	r3, #1
+ 919 009e CDD1     		bne	.L69
+ 256:Src/sdmm.c    **** 				for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state (ACMD41 with HCS bit) */
+ 920              		.loc 1 256 29 discriminator 1 view .LVU229
+ 921 00a0 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+ 256:Src/sdmm.c    **** 				for (tmr = 1000; tmr; tmr--) {			/* Wait for leaving idle state (ACMD41 with HCS bit) */
+ 922              		.loc 1 256 23 discriminator 1 view .LVU230
+ 923 00a4 AA2B     		cmp	r3, #170
+ 924 00a6 C9D1     		bne	.L69
+ 257:Src/sdmm.c    **** 					if (send_cmd(ACMD41, 1UL << 30) == 0) break;
+ 925              		.loc 1 257 14 view .LVU231
+ 926 00a8 4FF47A75 		mov	r5, #1000
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 24
+
+
+ 927              	.L71:
+ 928              	.LVL90:
+ 257:Src/sdmm.c    **** 					if (send_cmd(ACMD41, 1UL << 30) == 0) break;
+ 929              		.loc 1 257 22 is_stmt 1 discriminator 1 view .LVU232
+ 257:Src/sdmm.c    **** 					if (send_cmd(ACMD41, 1UL << 30) == 0) break;
+ 930              		.loc 1 257 5 is_stmt 0 discriminator 1 view .LVU233
+ 931 00ac 5DB1     		cbz	r5, .L72
+ 258:Src/sdmm.c    **** 					dly_us(1000);
+ 932              		.loc 1 258 6 is_stmt 1 view .LVU234
+ 258:Src/sdmm.c    **** 					dly_us(1000);
+ 933              		.loc 1 258 10 is_stmt 0 view .LVU235
+ 934 00ae 4FF08041 		mov	r1, #1073741824
+ 935 00b2 A920     		movs	r0, #169
+ 936 00b4 FFF7FEFF 		bl	send_cmd
+ 937              	.LVL91:
+ 258:Src/sdmm.c    **** 					dly_us(1000);
+ 938              		.loc 1 258 9 view .LVU236
+ 939 00b8 28B1     		cbz	r0, .L72
+ 259:Src/sdmm.c    **** 				}
+ 940              		.loc 1 259 6 is_stmt 1 discriminator 2 view .LVU237
+ 941 00ba 4FF47A70 		mov	r0, #1000
+ 942 00be FFF7FEFF 		bl	dly_us
+ 943              	.LVL92:
+ 257:Src/sdmm.c    **** 					if (send_cmd(ACMD41, 1UL << 30) == 0) break;
+ 944              		.loc 1 257 27 discriminator 2 view .LVU238
+ 257:Src/sdmm.c    **** 					if (send_cmd(ACMD41, 1UL << 30) == 0) break;
+ 945              		.loc 1 257 30 is_stmt 0 discriminator 2 view .LVU239
+ 946 00c2 013D     		subs	r5, r5, #1
+ 947              	.LVL93:
+ 257:Src/sdmm.c    **** 					if (send_cmd(ACMD41, 1UL << 30) == 0) break;
+ 948              		.loc 1 257 30 discriminator 2 view .LVU240
+ 949 00c4 F2E7     		b	.L71
+ 950              	.L72:
+ 261:Src/sdmm.c    **** 					rcvr_mmc(buf, 4);
+ 951              		.loc 1 261 5 is_stmt 1 view .LVU241
+ 261:Src/sdmm.c    **** 					rcvr_mmc(buf, 4);
+ 952              		.loc 1 261 8 is_stmt 0 view .LVU242
+ 953 00c6 002D     		cmp	r5, #0
+ 954 00c8 B8D0     		beq	.L69
+ 261:Src/sdmm.c    **** 					rcvr_mmc(buf, 4);
+ 955              		.loc 1 261 16 discriminator 1 view .LVU243
+ 956 00ca 0021     		movs	r1, #0
+ 957 00cc 3A20     		movs	r0, #58
+ 958 00ce FFF7FEFF 		bl	send_cmd
+ 959              	.LVL94:
+ 261:Src/sdmm.c    **** 					rcvr_mmc(buf, 4);
+ 960              		.loc 1 261 13 discriminator 1 view .LVU244
+ 961 00d2 0028     		cmp	r0, #0
+ 962 00d4 B2D1     		bne	.L69
+ 262:Src/sdmm.c    **** 					ty = (buf[0] & 0x40) ? CT_SDC2 | CT_BLOCK : CT_SDC2;	/* SDv2+ */
+ 963              		.loc 1 262 6 is_stmt 1 view .LVU245
+ 964 00d6 0421     		movs	r1, #4
+ 965 00d8 0DEB0100 		add	r0, sp, r1
+ 966 00dc FFF7FEFF 		bl	rcvr_mmc
+ 967              	.LVL95:
+ 263:Src/sdmm.c    **** 				}
+ 968              		.loc 1 263 6 view .LVU246
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 25
+
+
+ 263:Src/sdmm.c    **** 				}
+ 969              		.loc 1 263 15 is_stmt 0 view .LVU247
+ 970 00e0 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 263:Src/sdmm.c    **** 				}
+ 971              		.loc 1 263 9 view .LVU248
+ 972 00e4 13F0400F 		tst	r3, #64
+ 973 00e8 0FD0     		beq	.L80
+ 974 00ea 1824     		movs	r4, #24
+ 975              	.LVL96:
+ 263:Src/sdmm.c    **** 				}
+ 976              		.loc 1 263 9 view .LVU249
+ 977 00ec A6E7     		b	.L69
+ 978              	.LVL97:
+ 979              	.L85:
+ 268:Src/sdmm.c    **** 			} else {
+ 980              		.loc 1 268 23 view .LVU250
+ 981 00ee A927     		movs	r7, #169
+ 268:Src/sdmm.c    **** 			} else {
+ 982              		.loc 1 268 8 view .LVU251
+ 983 00f0 0826     		movs	r6, #8
+ 984 00f2 BDE7     		b	.L74
+ 985              	.LVL98:
+ 986              	.L76:
+ 276:Src/sdmm.c    **** 				ty = 0;
+ 987              		.loc 1 276 4 is_stmt 1 view .LVU252
+ 276:Src/sdmm.c    **** 				ty = 0;
+ 988              		.loc 1 276 7 is_stmt 0 view .LVU253
+ 989 00f4 002D     		cmp	r5, #0
+ 990 00f6 A1D0     		beq	.L69
+ 276:Src/sdmm.c    **** 				ty = 0;
+ 991              		.loc 1 276 16 discriminator 1 view .LVU254
+ 992 00f8 4FF40071 		mov	r1, #512
+ 993 00fc 1020     		movs	r0, #16
+ 994 00fe FFF7FEFF 		bl	send_cmd
+ 995              	.LVL99:
+ 276:Src/sdmm.c    **** 				ty = 0;
+ 996              		.loc 1 276 13 discriminator 1 view .LVU255
+ 997 0102 0028     		cmp	r0, #0
+ 998 0104 9AD1     		bne	.L69
+ 276:Src/sdmm.c    **** 				ty = 0;
+ 999              		.loc 1 276 13 view .LVU256
+ 1000 0106 3446     		mov	r4, r6
+ 1001              	.LVL100:
+ 276:Src/sdmm.c    **** 				ty = 0;
+ 1002              		.loc 1 276 13 view .LVU257
+ 1003 0108 98E7     		b	.L69
+ 1004              	.LVL101:
+ 1005              	.L80:
+ 263:Src/sdmm.c    **** 				}
+ 1006              		.loc 1 263 9 view .LVU258
+ 1007 010a 0824     		movs	r4, #8
+ 1008              	.LVL102:
+ 263:Src/sdmm.c    **** 				}
+ 1009              		.loc 1 263 9 view .LVU259
+ 1010 010c 96E7     		b	.L69
+ 1011              	.LVL103:
+ 1012              	.L78:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 26
+
+
+ 245:Src/sdmm.c    **** 
+ 1013              		.loc 1 245 18 view .LVU260
+ 1014 010e 0324     		movs	r4, #3
+ 1015 0110 9DE7     		b	.L66
+ 1016              	.L87:
+ 1017 0112 00BF     		.align	2
+ 1018              	.L86:
+ 1019 0114 00300140 		.word	1073819648
+ 1020 0118 00000000 		.word	hspi1
+ 1021 011c 00000000 		.word	.LANCHOR1
+ 1022 0120 00000000 		.word	.LANCHOR0
+ 1023              		.cfi_endproc
+ 1024              	.LFE78:
+ 1026              		.section	.text.disk_read,"ax",%progbits
+ 1027              		.align	1
+ 1028              		.global	disk_read
+ 1029              		.syntax unified
+ 1030              		.thumb
+ 1031              		.thumb_func
+ 1032              		.fpu softvfp
+ 1034              	disk_read:
+ 1035              	.LVL104:
+ 1036              	.LFB79:
+ 288:Src/sdmm.c    **** 
+ 289:Src/sdmm.c    **** 
+ 290:Src/sdmm.c    **** 
+ 291:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 292:Src/sdmm.c    **** /* Read Sector(s)                                                        */
+ 293:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 294:Src/sdmm.c    **** 
+ 295:Src/sdmm.c    **** DRESULT disk_read (
+ 296:Src/sdmm.c    **** 	BYTE drv,			/* Physical drive nmuber (0) */
+ 297:Src/sdmm.c    **** 	BYTE *buff,			/* Pointer to the data buffer to store read data */
+ 298:Src/sdmm.c    **** 	LBA_t sector,		/* Start sector number (LBA) */
+ 299:Src/sdmm.c    **** 	UINT count			/* Sector count (1..128) */
+ 300:Src/sdmm.c    **** )
+ 301:Src/sdmm.c    **** {
+ 1037              		.loc 1 301 1 is_stmt 1 view -0
+ 1038              		.cfi_startproc
+ 1039              		@ args = 0, pretend = 0, frame = 0
+ 1040              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1041              		.loc 1 301 1 is_stmt 0 view .LVU262
+ 1042 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1043              	.LCFI29:
+ 1044              		.cfi_def_cfa_offset 24
+ 1045              		.cfi_offset 3, -24
+ 1046              		.cfi_offset 4, -20
+ 1047              		.cfi_offset 5, -16
+ 1048              		.cfi_offset 6, -12
+ 1049              		.cfi_offset 7, -8
+ 1050              		.cfi_offset 14, -4
+ 1051 0002 0E46     		mov	r6, r1
+ 1052 0004 1546     		mov	r5, r2
+ 1053 0006 1C46     		mov	r4, r3
+ 302:Src/sdmm.c    **** 	BYTE cmd;
+ 1054              		.loc 1 302 2 is_stmt 1 view .LVU263
+ 303:Src/sdmm.c    **** 	DWORD sect = (DWORD)sector;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 27
+
+
+ 1055              		.loc 1 303 2 view .LVU264
+ 1056              	.LVL105:
+ 304:Src/sdmm.c    **** 
+ 305:Src/sdmm.c    **** 
+ 306:Src/sdmm.c    **** 	if (disk_status(drv) & STA_NOINIT) return RES_NOTRDY;
+ 1057              		.loc 1 306 2 view .LVU265
+ 1058              		.loc 1 306 6 is_stmt 0 view .LVU266
+ 1059 0008 FFF7FEFF 		bl	disk_status
+ 1060              	.LVL106:
+ 1061              		.loc 1 306 5 view .LVU267
+ 1062 000c 10F0010F 		tst	r0, #1
+ 1063 0010 26D1     		bne	.L95
+ 307:Src/sdmm.c    **** 	if (!(CardType & CT_BLOCK)) sect *= 512;	/* Convert LBA to byte address if needed */
+ 1064              		.loc 1 307 2 is_stmt 1 view .LVU268
+ 1065              		.loc 1 307 17 is_stmt 0 view .LVU269
+ 1066 0012 144B     		ldr	r3, .L99
+ 1067 0014 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1068              		.loc 1 307 5 view .LVU270
+ 1069 0016 13F0100F 		tst	r3, #16
+ 1070 001a 00D1     		bne	.L90
+ 1071              		.loc 1 307 30 is_stmt 1 discriminator 1 view .LVU271
+ 1072              		.loc 1 307 35 is_stmt 0 discriminator 1 view .LVU272
+ 1073 001c 6D02     		lsls	r5, r5, #9
+ 1074              	.LVL107:
+ 1075              	.L90:
+ 308:Src/sdmm.c    **** 
+ 309:Src/sdmm.c    **** 	cmd = count > 1 ? CMD18 : CMD17;			/*  READ_MULTIPLE_BLOCK : READ_SINGLE_BLOCK */
+ 1076              		.loc 1 309 2 is_stmt 1 view .LVU273
+ 1077              		.loc 1 309 6 is_stmt 0 view .LVU274
+ 1078 001e 012C     		cmp	r4, #1
+ 1079 0020 17D9     		bls	.L96
+ 1080              		.loc 1 309 6 view .LVU275
+ 1081 0022 1227     		movs	r7, #18
+ 1082              	.L91:
+ 1083              	.LVL108:
+ 310:Src/sdmm.c    **** 	if (send_cmd(cmd, sect) == 0) {
+ 1084              		.loc 1 310 2 is_stmt 1 discriminator 4 view .LVU276
+ 1085              		.loc 1 310 6 is_stmt 0 discriminator 4 view .LVU277
+ 1086 0024 2946     		mov	r1, r5
+ 1087 0026 3846     		mov	r0, r7
+ 1088 0028 FFF7FEFF 		bl	send_cmd
+ 1089              	.LVL109:
+ 1090              		.loc 1 310 5 discriminator 4 view .LVU278
+ 1091 002c 58B9     		cbnz	r0, .L92
+ 1092              	.L94:
+ 311:Src/sdmm.c    **** 		do {
+ 1093              		.loc 1 311 3 is_stmt 1 view .LVU279
+ 312:Src/sdmm.c    **** 			if (!rcvr_datablock(buff, 512)) break;
+ 1094              		.loc 1 312 4 view .LVU280
+ 1095              		.loc 1 312 9 is_stmt 0 view .LVU281
+ 1096 002e 4FF40071 		mov	r1, #512
+ 1097 0032 3046     		mov	r0, r6
+ 1098 0034 FFF7FEFF 		bl	rcvr_datablock
+ 1099              	.LVL110:
+ 1100              		.loc 1 312 7 view .LVU282
+ 1101 0038 18B1     		cbz	r0, .L93
+ 313:Src/sdmm.c    **** 			buff += 512;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 28
+
+
+ 1102              		.loc 1 313 4 is_stmt 1 view .LVU283
+ 1103              		.loc 1 313 9 is_stmt 0 view .LVU284
+ 1104 003a 06F50076 		add	r6, r6, #512
+ 1105              	.LVL111:
+ 314:Src/sdmm.c    **** 		} while (--count);
+ 1106              		.loc 1 314 11 is_stmt 1 view .LVU285
+ 1107              		.loc 1 314 3 is_stmt 0 view .LVU286
+ 1108 003e 013C     		subs	r4, r4, #1
+ 1109              	.LVL112:
+ 1110              		.loc 1 314 3 view .LVU287
+ 1111 0040 F5D1     		bne	.L94
+ 1112              	.L93:
+ 315:Src/sdmm.c    **** 		if (cmd == CMD18) send_cmd(CMD12, 0);	/* STOP_TRANSMISSION */
+ 1113              		.loc 1 315 3 is_stmt 1 view .LVU288
+ 1114              		.loc 1 315 6 is_stmt 0 view .LVU289
+ 1115 0042 122F     		cmp	r7, #18
+ 1116 0044 07D0     		beq	.L98
+ 1117              	.L92:
+ 316:Src/sdmm.c    **** 	}
+ 317:Src/sdmm.c    **** 	deselect();
+ 1118              		.loc 1 317 2 is_stmt 1 view .LVU290
+ 1119 0046 FFF7FEFF 		bl	deselect
+ 1120              	.LVL113:
+ 318:Src/sdmm.c    **** 
+ 319:Src/sdmm.c    **** 	return count ? RES_ERROR : RES_OK;
+ 1121              		.loc 1 319 2 view .LVU291
+ 1122              		.loc 1 319 27 is_stmt 0 view .LVU292
+ 1123 004a 201E     		subs	r0, r4, #0
+ 1124 004c 18BF     		it	ne
+ 1125 004e 0120     		movne	r0, #1
+ 1126              	.LVL114:
+ 1127              	.L89:
+ 320:Src/sdmm.c    **** }
+ 1128              		.loc 1 320 1 view .LVU293
+ 1129 0050 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1130              	.LVL115:
+ 1131              	.L96:
+ 309:Src/sdmm.c    **** 	if (send_cmd(cmd, sect) == 0) {
+ 1132              		.loc 1 309 6 view .LVU294
+ 1133 0052 1127     		movs	r7, #17
+ 1134 0054 E6E7     		b	.L91
+ 1135              	.LVL116:
+ 1136              	.L98:
+ 315:Src/sdmm.c    **** 	}
+ 1137              		.loc 1 315 21 is_stmt 1 discriminator 1 view .LVU295
+ 1138 0056 0021     		movs	r1, #0
+ 1139 0058 0C20     		movs	r0, #12
+ 1140 005a FFF7FEFF 		bl	send_cmd
+ 1141              	.LVL117:
+ 1142 005e F2E7     		b	.L92
+ 1143              	.LVL118:
+ 1144              	.L95:
+ 306:Src/sdmm.c    **** 	if (!(CardType & CT_BLOCK)) sect *= 512;	/* Convert LBA to byte address if needed */
+ 1145              		.loc 1 306 44 is_stmt 0 view .LVU296
+ 1146 0060 0320     		movs	r0, #3
+ 1147 0062 F5E7     		b	.L89
+ 1148              	.L100:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 29
+
+
+ 1149              		.align	2
+ 1150              	.L99:
+ 1151 0064 00000000 		.word	.LANCHOR1
+ 1152              		.cfi_endproc
+ 1153              	.LFE79:
+ 1155              		.section	.text.disk_write,"ax",%progbits
+ 1156              		.align	1
+ 1157              		.global	disk_write
+ 1158              		.syntax unified
+ 1159              		.thumb
+ 1160              		.thumb_func
+ 1161              		.fpu softvfp
+ 1163              	disk_write:
+ 1164              	.LVL119:
+ 1165              	.LFB80:
+ 321:Src/sdmm.c    **** 
+ 322:Src/sdmm.c    **** 
+ 323:Src/sdmm.c    **** 
+ 324:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 325:Src/sdmm.c    **** /* Write Sector(s)                                                       */
+ 326:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 327:Src/sdmm.c    **** 
+ 328:Src/sdmm.c    **** DRESULT disk_write (
+ 329:Src/sdmm.c    **** 	BYTE drv,			/* Physical drive nmuber (0) */
+ 330:Src/sdmm.c    **** 	const BYTE *buff,	/* Pointer to the data to be written */
+ 331:Src/sdmm.c    **** 	LBA_t sector,		/* Start sector number (LBA) */
+ 332:Src/sdmm.c    **** 	UINT count			/* Sector count (1..128) */
+ 333:Src/sdmm.c    **** )
+ 334:Src/sdmm.c    **** {
+ 1166              		.loc 1 334 1 is_stmt 1 view -0
+ 1167              		.cfi_startproc
+ 1168              		@ args = 0, pretend = 0, frame = 0
+ 1169              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1170              		.loc 1 334 1 is_stmt 0 view .LVU298
+ 1171 0000 70B5     		push	{r4, r5, r6, lr}
+ 1172              	.LCFI30:
+ 1173              		.cfi_def_cfa_offset 16
+ 1174              		.cfi_offset 4, -16
+ 1175              		.cfi_offset 5, -12
+ 1176              		.cfi_offset 6, -8
+ 1177              		.cfi_offset 14, -4
+ 1178 0002 0E46     		mov	r6, r1
+ 1179 0004 1546     		mov	r5, r2
+ 1180 0006 1C46     		mov	r4, r3
+ 335:Src/sdmm.c    **** 	DWORD sect = (DWORD)sector;
+ 1181              		.loc 1 335 2 is_stmt 1 view .LVU299
+ 1182              	.LVL120:
+ 336:Src/sdmm.c    **** 
+ 337:Src/sdmm.c    **** 
+ 338:Src/sdmm.c    **** 	if (disk_status(drv) & STA_NOINIT) return RES_NOTRDY;
+ 1183              		.loc 1 338 2 view .LVU300
+ 1184              		.loc 1 338 6 is_stmt 0 view .LVU301
+ 1185 0008 FFF7FEFF 		bl	disk_status
+ 1186              	.LVL121:
+ 1187              		.loc 1 338 5 view .LVU302
+ 1188 000c 10F0010F 		tst	r0, #1
+ 1189 0010 38D1     		bne	.L109
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 30
+
+
+ 339:Src/sdmm.c    **** 	if (!(CardType & CT_BLOCK)) sect *= 512;	/* Convert LBA to byte address if needed */
+ 1190              		.loc 1 339 2 is_stmt 1 view .LVU303
+ 1191              		.loc 1 339 17 is_stmt 0 view .LVU304
+ 1192 0012 1D4B     		ldr	r3, .L115
+ 1193 0014 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1194              		.loc 1 339 5 view .LVU305
+ 1195 0016 13F0100F 		tst	r3, #16
+ 1196 001a 00D1     		bne	.L103
+ 1197              		.loc 1 339 30 is_stmt 1 discriminator 1 view .LVU306
+ 1198              		.loc 1 339 35 is_stmt 0 discriminator 1 view .LVU307
+ 1199 001c 6D02     		lsls	r5, r5, #9
+ 1200              	.LVL122:
+ 1201              	.L103:
+ 340:Src/sdmm.c    **** 
+ 341:Src/sdmm.c    **** 	if (count == 1) {	/* Single block write */
+ 1202              		.loc 1 341 2 is_stmt 1 view .LVU308
+ 1203              		.loc 1 341 5 is_stmt 0 view .LVU309
+ 1204 001e 012C     		cmp	r4, #1
+ 1205 0020 1BD0     		beq	.L113
+ 342:Src/sdmm.c    **** 		if ((send_cmd(CMD24, sect) == 0)	/* WRITE_BLOCK */
+ 343:Src/sdmm.c    **** 			&& xmit_datablock(buff, 0xFE))
+ 344:Src/sdmm.c    **** 			count = 0;
+ 345:Src/sdmm.c    **** 	}
+ 346:Src/sdmm.c    **** 	else {				/* Multiple block write */
+ 347:Src/sdmm.c    **** 		if (CardType & CT_SDC) send_cmd(ACMD23, count);
+ 1206              		.loc 1 347 3 is_stmt 1 view .LVU310
+ 1207              		.loc 1 347 6 is_stmt 0 view .LVU311
+ 1208 0022 13F00C0F 		tst	r3, #12
+ 1209 0026 26D1     		bne	.L114
+ 1210              	.L106:
+ 348:Src/sdmm.c    **** 		if (send_cmd(CMD25, sect) == 0) {	/* WRITE_MULTIPLE_BLOCK */
+ 1211              		.loc 1 348 3 is_stmt 1 view .LVU312
+ 1212              		.loc 1 348 7 is_stmt 0 view .LVU313
+ 1213 0028 2946     		mov	r1, r5
+ 1214 002a 1920     		movs	r0, #25
+ 1215 002c FFF7FEFF 		bl	send_cmd
+ 1216              	.LVL123:
+ 1217              		.loc 1 348 6 view .LVU314
+ 1218 0030 68B9     		cbnz	r0, .L105
+ 1219              	.L108:
+ 349:Src/sdmm.c    **** 			do {
+ 1220              		.loc 1 349 4 is_stmt 1 view .LVU315
+ 350:Src/sdmm.c    **** 				if (!xmit_datablock(buff, 0xFC)) break;
+ 1221              		.loc 1 350 5 view .LVU316
+ 1222              		.loc 1 350 10 is_stmt 0 view .LVU317
+ 1223 0032 FC21     		movs	r1, #252
+ 1224 0034 3046     		mov	r0, r6
+ 1225 0036 FFF7FEFF 		bl	xmit_datablock
+ 1226              	.LVL124:
+ 1227              		.loc 1 350 8 view .LVU318
+ 1228 003a 18B1     		cbz	r0, .L107
+ 351:Src/sdmm.c    **** 				buff += 512;
+ 1229              		.loc 1 351 5 is_stmt 1 view .LVU319
+ 1230              		.loc 1 351 10 is_stmt 0 view .LVU320
+ 1231 003c 06F50076 		add	r6, r6, #512
+ 1232              	.LVL125:
+ 352:Src/sdmm.c    **** 			} while (--count);
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 31
+
+
+ 1233              		.loc 1 352 12 is_stmt 1 view .LVU321
+ 1234              		.loc 1 352 4 is_stmt 0 view .LVU322
+ 1235 0040 013C     		subs	r4, r4, #1
+ 1236              	.LVL126:
+ 1237              		.loc 1 352 4 view .LVU323
+ 1238 0042 F6D1     		bne	.L108
+ 1239              	.L107:
+ 353:Src/sdmm.c    **** 			if (!xmit_datablock(0, 0xFD))	/* STOP_TRAN token */
+ 1240              		.loc 1 353 4 is_stmt 1 view .LVU324
+ 1241              		.loc 1 353 9 is_stmt 0 view .LVU325
+ 1242 0044 FD21     		movs	r1, #253
+ 1243 0046 0020     		movs	r0, #0
+ 1244 0048 FFF7FEFF 		bl	xmit_datablock
+ 1245              	.LVL127:
+ 1246              		.loc 1 353 7 view .LVU326
+ 1247 004c C0B1     		cbz	r0, .L111
+ 1248              	.LVL128:
+ 1249              	.L105:
+ 354:Src/sdmm.c    **** 				count = 1;
+ 355:Src/sdmm.c    **** 		}
+ 356:Src/sdmm.c    **** 	}
+ 357:Src/sdmm.c    **** 	deselect();
+ 1250              		.loc 1 357 2 is_stmt 1 view .LVU327
+ 1251 004e FFF7FEFF 		bl	deselect
+ 1252              	.LVL129:
+ 358:Src/sdmm.c    **** 
+ 359:Src/sdmm.c    **** 	return count ? RES_ERROR : RES_OK;
+ 1253              		.loc 1 359 2 view .LVU328
+ 1254              		.loc 1 359 27 is_stmt 0 view .LVU329
+ 1255 0052 201E     		subs	r0, r4, #0
+ 1256 0054 18BF     		it	ne
+ 1257 0056 0120     		movne	r0, #1
+ 1258              	.L102:
+ 360:Src/sdmm.c    **** }
+ 1259              		.loc 1 360 1 view .LVU330
+ 1260 0058 70BD     		pop	{r4, r5, r6, pc}
+ 1261              	.LVL130:
+ 1262              	.L113:
+ 342:Src/sdmm.c    **** 			&& xmit_datablock(buff, 0xFE))
+ 1263              		.loc 1 342 3 is_stmt 1 view .LVU331
+ 342:Src/sdmm.c    **** 			&& xmit_datablock(buff, 0xFE))
+ 1264              		.loc 1 342 8 is_stmt 0 view .LVU332
+ 1265 005a 2946     		mov	r1, r5
+ 1266 005c 1820     		movs	r0, #24
+ 1267 005e FFF7FEFF 		bl	send_cmd
+ 1268              	.LVL131:
+ 342:Src/sdmm.c    **** 			&& xmit_datablock(buff, 0xFE))
+ 1269              		.loc 1 342 6 view .LVU333
+ 1270 0062 0028     		cmp	r0, #0
+ 1271 0064 F3D1     		bne	.L105
+ 343:Src/sdmm.c    **** 			count = 0;
+ 1272              		.loc 1 343 7 view .LVU334
+ 1273 0066 FE21     		movs	r1, #254
+ 1274 0068 3046     		mov	r0, r6
+ 1275 006a FFF7FEFF 		bl	xmit_datablock
+ 1276              	.LVL132:
+ 343:Src/sdmm.c    **** 			count = 0;
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 32
+
+
+ 1277              		.loc 1 343 4 view .LVU335
+ 1278 006e 0028     		cmp	r0, #0
+ 1279 0070 EDD0     		beq	.L105
+ 344:Src/sdmm.c    **** 	}
+ 1280              		.loc 1 344 10 view .LVU336
+ 1281 0072 0024     		movs	r4, #0
+ 1282              	.LVL133:
+ 344:Src/sdmm.c    **** 	}
+ 1283              		.loc 1 344 10 view .LVU337
+ 1284 0074 EBE7     		b	.L105
+ 1285              	.LVL134:
+ 1286              	.L114:
+ 347:Src/sdmm.c    **** 		if (send_cmd(CMD25, sect) == 0) {	/* WRITE_MULTIPLE_BLOCK */
+ 1287              		.loc 1 347 26 is_stmt 1 discriminator 1 view .LVU338
+ 1288 0076 2146     		mov	r1, r4
+ 1289 0078 9720     		movs	r0, #151
+ 1290 007a FFF7FEFF 		bl	send_cmd
+ 1291              	.LVL135:
+ 1292 007e D3E7     		b	.L106
+ 1293              	.L111:
+ 354:Src/sdmm.c    **** 		}
+ 1294              		.loc 1 354 11 is_stmt 0 view .LVU339
+ 1295 0080 0124     		movs	r4, #1
+ 1296              	.LVL136:
+ 354:Src/sdmm.c    **** 		}
+ 1297              		.loc 1 354 11 view .LVU340
+ 1298 0082 E4E7     		b	.L105
+ 1299              	.LVL137:
+ 1300              	.L109:
+ 338:Src/sdmm.c    **** 	if (!(CardType & CT_BLOCK)) sect *= 512;	/* Convert LBA to byte address if needed */
+ 1301              		.loc 1 338 44 view .LVU341
+ 1302 0084 0320     		movs	r0, #3
+ 1303 0086 E7E7     		b	.L102
+ 1304              	.L116:
+ 1305              		.align	2
+ 1306              	.L115:
+ 1307 0088 00000000 		.word	.LANCHOR1
+ 1308              		.cfi_endproc
+ 1309              	.LFE80:
+ 1311              		.section	.text.disk_ioctl,"ax",%progbits
+ 1312              		.align	1
+ 1313              		.global	disk_ioctl
+ 1314              		.syntax unified
+ 1315              		.thumb
+ 1316              		.thumb_func
+ 1317              		.fpu softvfp
+ 1319              	disk_ioctl:
+ 1320              	.LVL138:
+ 1321              	.LFB81:
+ 361:Src/sdmm.c    **** 
+ 362:Src/sdmm.c    **** 
+ 363:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 364:Src/sdmm.c    **** /* Miscellaneous Functions                                               */
+ 365:Src/sdmm.c    **** /*-----------------------------------------------------------------------*/
+ 366:Src/sdmm.c    **** 
+ 367:Src/sdmm.c    **** DRESULT disk_ioctl (
+ 368:Src/sdmm.c    **** 	BYTE drv,		/* Physical drive nmuber (0) */
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 33
+
+
+ 369:Src/sdmm.c    **** 	BYTE ctrl,		/* Control code */
+ 370:Src/sdmm.c    **** 	void *buff		/* Buffer to send/receive control data */
+ 371:Src/sdmm.c    **** )
+ 372:Src/sdmm.c    **** {
+ 1322              		.loc 1 372 1 is_stmt 1 view -0
+ 1323              		.cfi_startproc
+ 1324              		@ args = 0, pretend = 0, frame = 16
+ 1325              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1326              		.loc 1 372 1 is_stmt 0 view .LVU343
+ 1327 0000 70B5     		push	{r4, r5, r6, lr}
+ 1328              	.LCFI31:
+ 1329              		.cfi_def_cfa_offset 16
+ 1330              		.cfi_offset 4, -16
+ 1331              		.cfi_offset 5, -12
+ 1332              		.cfi_offset 6, -8
+ 1333              		.cfi_offset 14, -4
+ 1334 0002 84B0     		sub	sp, sp, #16
+ 1335              	.LCFI32:
+ 1336              		.cfi_def_cfa_offset 32
+ 1337 0004 0D46     		mov	r5, r1
+ 1338 0006 1646     		mov	r6, r2
+ 373:Src/sdmm.c    **** 	DRESULT res;
+ 1339              		.loc 1 373 2 is_stmt 1 view .LVU344
+ 374:Src/sdmm.c    **** 	BYTE n, csd[16];
+ 1340              		.loc 1 374 2 view .LVU345
+ 375:Src/sdmm.c    **** 	DWORD cs;
+ 1341              		.loc 1 375 2 view .LVU346
+ 376:Src/sdmm.c    **** 
+ 377:Src/sdmm.c    **** 
+ 378:Src/sdmm.c    **** 	if (disk_status(drv) & STA_NOINIT) return RES_NOTRDY;	/* Check if card is in the socket */
+ 1342              		.loc 1 378 2 view .LVU347
+ 1343              		.loc 1 378 6 is_stmt 0 view .LVU348
+ 1344 0008 FFF7FEFF 		bl	disk_status
+ 1345              	.LVL139:
+ 1346              		.loc 1 378 5 view .LVU349
+ 1347 000c 10F00104 		ands	r4, r0, #1
+ 1348 0010 59D1     		bne	.L123
+ 379:Src/sdmm.c    **** 
+ 380:Src/sdmm.c    **** 	res = RES_ERROR;
+ 1349              		.loc 1 380 2 is_stmt 1 view .LVU350
+ 1350              	.LVL140:
+ 381:Src/sdmm.c    **** 	switch (ctrl) {
+ 1351              		.loc 1 381 2 view .LVU351
+ 1352 0012 012D     		cmp	r5, #1
+ 1353 0014 0ED0     		beq	.L119
+ 1354 0016 032D     		cmp	r5, #3
+ 1355 0018 4ED0     		beq	.L120
+ 1356 001a 2DB1     		cbz	r5, .L129
+ 1357 001c 0424     		movs	r4, #4
+ 1358              	.LVL141:
+ 1359              	.L121:
+ 382:Src/sdmm.c    **** 		case CTRL_SYNC :		/* Make sure that no pending write process */
+ 383:Src/sdmm.c    **** 			if (SD_select()) res = RES_OK;
+ 384:Src/sdmm.c    **** 			break;
+ 385:Src/sdmm.c    **** 
+ 386:Src/sdmm.c    **** 		case GET_SECTOR_COUNT :	/* Get number of sectors on the disk (DWORD) */
+ 387:Src/sdmm.c    **** 			if ((send_cmd(CMD9, 0) == 0) && rcvr_datablock(csd, 16)) {
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 34
+
+
+ 388:Src/sdmm.c    **** 				if ((csd[0] >> 6) == 1) {	/* SDC ver 2.00 */
+ 389:Src/sdmm.c    **** 					cs = csd[9] + ((WORD)csd[8] << 8) + ((DWORD)(csd[7] & 63) << 16) + 1;
+ 390:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 391:Src/sdmm.c    **** 				} else {					/* SDC ver 1.XX or MMC */
+ 392:Src/sdmm.c    **** 					n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
+ 393:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 394:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 395:Src/sdmm.c    **** 				}
+ 396:Src/sdmm.c    **** 				res = RES_OK;
+ 397:Src/sdmm.c    **** 			}
+ 398:Src/sdmm.c    **** 			break;
+ 399:Src/sdmm.c    **** 
+ 400:Src/sdmm.c    **** 		case GET_BLOCK_SIZE :	/* Get erase block size in unit of sector (DWORD) */
+ 401:Src/sdmm.c    **** 			*(DWORD*)buff = 128;
+ 402:Src/sdmm.c    **** 			res = RES_OK;
+ 403:Src/sdmm.c    **** 			break;
+ 404:Src/sdmm.c    **** 
+ 405:Src/sdmm.c    **** 		default:
+ 406:Src/sdmm.c    **** 			res = RES_PARERR;
+ 407:Src/sdmm.c    **** 	}
+ 408:Src/sdmm.c    **** 
+ 409:Src/sdmm.c    **** 	deselect();
+ 1360              		.loc 1 409 2 view .LVU352
+ 1361 001e FFF7FEFF 		bl	deselect
+ 1362              	.LVL142:
+ 410:Src/sdmm.c    **** 
+ 411:Src/sdmm.c    **** 	return res;
+ 1363              		.loc 1 411 2 view .LVU353
+ 1364              	.L118:
+ 412:Src/sdmm.c    **** }
+ 1365              		.loc 1 412 1 is_stmt 0 view .LVU354
+ 1366 0022 2046     		mov	r0, r4
+ 1367 0024 04B0     		add	sp, sp, #16
+ 1368              	.LCFI33:
+ 1369              		.cfi_remember_state
+ 1370              		.cfi_def_cfa_offset 16
+ 1371              		@ sp needed
+ 1372 0026 70BD     		pop	{r4, r5, r6, pc}
+ 1373              	.LVL143:
+ 1374              	.L129:
+ 1375              	.LCFI34:
+ 1376              		.cfi_restore_state
+ 383:Src/sdmm.c    **** 			break;
+ 1377              		.loc 1 383 4 is_stmt 1 view .LVU355
+ 383:Src/sdmm.c    **** 			break;
+ 1378              		.loc 1 383 8 is_stmt 0 view .LVU356
+ 1379 0028 FFF7FEFF 		bl	SD_select
+ 1380              	.LVL144:
+ 383:Src/sdmm.c    **** 			break;
+ 1381              		.loc 1 383 7 view .LVU357
+ 1382 002c 0028     		cmp	r0, #0
+ 1383 002e 46D1     		bne	.L125
+ 380:Src/sdmm.c    **** 	switch (ctrl) {
+ 1384              		.loc 1 380 6 view .LVU358
+ 1385 0030 0124     		movs	r4, #1
+ 1386 0032 F4E7     		b	.L121
+ 1387              	.L119:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 35
+
+
+ 387:Src/sdmm.c    **** 				if ((csd[0] >> 6) == 1) {	/* SDC ver 2.00 */
+ 1388              		.loc 1 387 4 is_stmt 1 view .LVU359
+ 387:Src/sdmm.c    **** 				if ((csd[0] >> 6) == 1) {	/* SDC ver 2.00 */
+ 1389              		.loc 1 387 9 is_stmt 0 view .LVU360
+ 1390 0034 0021     		movs	r1, #0
+ 1391 0036 0920     		movs	r0, #9
+ 1392 0038 FFF7FEFF 		bl	send_cmd
+ 1393              	.LVL145:
+ 387:Src/sdmm.c    **** 				if ((csd[0] >> 6) == 1) {	/* SDC ver 2.00 */
+ 1394              		.loc 1 387 7 view .LVU361
+ 1395 003c 0446     		mov	r4, r0
+ 1396 003e 08B1     		cbz	r0, .L130
+ 380:Src/sdmm.c    **** 	switch (ctrl) {
+ 1397              		.loc 1 380 6 view .LVU362
+ 1398 0040 2C46     		mov	r4, r5
+ 1399 0042 ECE7     		b	.L121
+ 1400              	.L130:
+ 387:Src/sdmm.c    **** 				if ((csd[0] >> 6) == 1) {	/* SDC ver 2.00 */
+ 1401              		.loc 1 387 36 discriminator 1 view .LVU363
+ 1402 0044 1021     		movs	r1, #16
+ 1403 0046 6846     		mov	r0, sp
+ 1404 0048 FFF7FEFF 		bl	rcvr_datablock
+ 1405              	.LVL146:
+ 387:Src/sdmm.c    **** 				if ((csd[0] >> 6) == 1) {	/* SDC ver 2.00 */
+ 1406              		.loc 1 387 33 discriminator 1 view .LVU364
+ 1407 004c C8B3     		cbz	r0, .L127
+ 388:Src/sdmm.c    **** 					cs = csd[9] + ((WORD)csd[8] << 8) + ((DWORD)(csd[7] & 63) << 16) + 1;
+ 1408              		.loc 1 388 5 is_stmt 1 view .LVU365
+ 388:Src/sdmm.c    **** 					cs = csd[9] + ((WORD)csd[8] << 8) + ((DWORD)(csd[7] & 63) << 16) + 1;
+ 1409              		.loc 1 388 13 is_stmt 0 view .LVU366
+ 1410 004e 9DF80030 		ldrb	r3, [sp]	@ zero_extendqisi2
+ 388:Src/sdmm.c    **** 					cs = csd[9] + ((WORD)csd[8] << 8) + ((DWORD)(csd[7] & 63) << 16) + 1;
+ 1411              		.loc 1 388 23 view .LVU367
+ 1412 0052 9B09     		lsrs	r3, r3, #6
+ 388:Src/sdmm.c    **** 					cs = csd[9] + ((WORD)csd[8] << 8) + ((DWORD)(csd[7] & 63) << 16) + 1;
+ 1413              		.loc 1 388 8 view .LVU368
+ 1414 0054 012B     		cmp	r3, #1
+ 1415 0056 1FD0     		beq	.L131
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1416              		.loc 1 392 6 is_stmt 1 view .LVU369
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1417              		.loc 1 392 14 is_stmt 0 view .LVU370
+ 1418 0058 9DF80520 		ldrb	r2, [sp, #5]	@ zero_extendqisi2
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1419              		.loc 1 392 18 view .LVU371
+ 1420 005c 02F00F02 		and	r2, r2, #15
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1421              		.loc 1 392 31 view .LVU372
+ 1422 0060 9DF80A30 		ldrb	r3, [sp, #10]	@ zero_extendqisi2
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1423              		.loc 1 392 24 view .LVU373
+ 1424 0064 02EBD312 		add	r2, r2, r3, lsr #7
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1425              		.loc 1 392 56 view .LVU374
+ 1426 0068 9DF80930 		ldrb	r3, [sp, #9]	@ zero_extendqisi2
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1427              		.loc 1 392 65 view .LVU375
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 36
+
+
+ 1428 006c 5B00     		lsls	r3, r3, #1
+ 1429 006e 03F00603 		and	r3, r3, #6
+ 392:Src/sdmm.c    **** 					cs = (csd[8] >> 6) + ((WORD)csd[7] << 2) + ((WORD)(csd[6] & 3) << 10) + 1;
+ 1430              		.loc 1 392 49 view .LVU376
+ 1431 0072 1A44     		add	r2, r2, r3
+ 1432              	.LVL147:
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1433              		.loc 1 393 6 is_stmt 1 view .LVU377
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1434              		.loc 1 393 15 is_stmt 0 view .LVU378
+ 1435 0074 9DF80810 		ldrb	r1, [sp, #8]	@ zero_extendqisi2
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1436              		.loc 1 393 37 view .LVU379
+ 1437 0078 9DF80730 		ldrb	r3, [sp, #7]	@ zero_extendqisi2
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1438              		.loc 1 393 41 view .LVU380
+ 1439 007c 9B00     		lsls	r3, r3, #2
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1440              		.loc 1 393 25 view .LVU381
+ 1441 007e 03EB9113 		add	r3, r3, r1, lsr #6
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1442              		.loc 1 393 60 view .LVU382
+ 1443 0082 9DF80610 		ldrb	r1, [sp, #6]	@ zero_extendqisi2
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1444              		.loc 1 393 69 view .LVU383
+ 1445 0086 8902     		lsls	r1, r1, #10
+ 1446 0088 01F44061 		and	r1, r1, #3072
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1447              		.loc 1 393 47 view .LVU384
+ 1448 008c 0B44     		add	r3, r3, r1
+ 393:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << (n - 9);
+ 1449              		.loc 1 393 76 view .LVU385
+ 1450 008e 0133     		adds	r3, r3, #1
+ 1451              	.LVL148:
+ 394:Src/sdmm.c    **** 				}
+ 1452              		.loc 1 394 6 is_stmt 1 view .LVU386
+ 394:Src/sdmm.c    **** 				}
+ 1453              		.loc 1 394 31 is_stmt 0 view .LVU387
+ 1454 0090 073A     		subs	r2, r2, #7
+ 1455              	.LVL149:
+ 394:Src/sdmm.c    **** 				}
+ 1456              		.loc 1 394 25 view .LVU388
+ 1457 0092 9340     		lsls	r3, r3, r2
+ 1458              	.LVL150:
+ 394:Src/sdmm.c    **** 				}
+ 1459              		.loc 1 394 20 view .LVU389
+ 1460 0094 3360     		str	r3, [r6]
+ 1461              	.LVL151:
+ 394:Src/sdmm.c    **** 				}
+ 1462              		.loc 1 394 20 view .LVU390
+ 1463 0096 C2E7     		b	.L121
+ 1464              	.LVL152:
+ 1465              	.L131:
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1466              		.loc 1 389 6 is_stmt 1 view .LVU391
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1467              		.loc 1 389 14 is_stmt 0 view .LVU392
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 37
+
+
+ 1468 0098 9DF80930 		ldrb	r3, [sp, #9]	@ zero_extendqisi2
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1469              		.loc 1 389 30 view .LVU393
+ 1470 009c 9DF80820 		ldrb	r2, [sp, #8]	@ zero_extendqisi2
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1471              		.loc 1 389 18 view .LVU394
+ 1472 00a0 03EB0223 		add	r3, r3, r2, lsl #8
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1473              		.loc 1 389 54 view .LVU395
+ 1474 00a4 9DF80720 		ldrb	r2, [sp, #7]	@ zero_extendqisi2
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1475              		.loc 1 389 64 view .LVU396
+ 1476 00a8 1204     		lsls	r2, r2, #16
+ 1477 00aa 02F47C12 		and	r2, r2, #4128768
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1478              		.loc 1 389 40 view .LVU397
+ 1479 00ae 1344     		add	r3, r3, r2
+ 389:Src/sdmm.c    **** 					*(LBA_t*)buff = cs << 10;
+ 1480              		.loc 1 389 9 view .LVU398
+ 1481 00b0 0133     		adds	r3, r3, #1
+ 1482              	.LVL153:
+ 390:Src/sdmm.c    **** 				} else {					/* SDC ver 1.XX or MMC */
+ 1483              		.loc 1 390 6 is_stmt 1 view .LVU399
+ 390:Src/sdmm.c    **** 				} else {					/* SDC ver 1.XX or MMC */
+ 1484              		.loc 1 390 25 is_stmt 0 view .LVU400
+ 1485 00b2 9B02     		lsls	r3, r3, #10
+ 1486              	.LVL154:
+ 390:Src/sdmm.c    **** 				} else {					/* SDC ver 1.XX or MMC */
+ 1487              		.loc 1 390 20 view .LVU401
+ 1488 00b4 3360     		str	r3, [r6]
+ 1489              	.LVL155:
+ 390:Src/sdmm.c    **** 				} else {					/* SDC ver 1.XX or MMC */
+ 1490              		.loc 1 390 20 view .LVU402
+ 1491 00b6 B2E7     		b	.L121
+ 1492              	.L120:
+ 401:Src/sdmm.c    **** 			res = RES_OK;
+ 1493              		.loc 1 401 4 is_stmt 1 view .LVU403
+ 401:Src/sdmm.c    **** 			res = RES_OK;
+ 1494              		.loc 1 401 18 is_stmt 0 view .LVU404
+ 1495 00b8 8023     		movs	r3, #128
+ 1496 00ba 3360     		str	r3, [r6]
+ 402:Src/sdmm.c    **** 			break;
+ 1497              		.loc 1 402 4 is_stmt 1 view .LVU405
+ 1498              	.LVL156:
+ 403:Src/sdmm.c    **** 
+ 1499              		.loc 1 403 4 view .LVU406
+ 1500 00bc AFE7     		b	.L121
+ 1501              	.LVL157:
+ 1502              	.L125:
+ 383:Src/sdmm.c    **** 			break;
+ 1503              		.loc 1 383 25 is_stmt 0 view .LVU407
+ 1504 00be 2C46     		mov	r4, r5
+ 1505 00c0 ADE7     		b	.L121
+ 1506              	.L127:
+ 380:Src/sdmm.c    **** 	switch (ctrl) {
+ 1507              		.loc 1 380 6 view .LVU408
+ 1508 00c2 2C46     		mov	r4, r5
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 38
+
+
+ 1509 00c4 ABE7     		b	.L121
+ 1510              	.LVL158:
+ 1511              	.L123:
+ 378:Src/sdmm.c    **** 
+ 1512              		.loc 1 378 44 view .LVU409
+ 1513 00c6 0324     		movs	r4, #3
+ 1514 00c8 ABE7     		b	.L118
+ 1515              		.cfi_endproc
+ 1516              	.LFE81:
+ 1518              		.section	.text.scan_files,"ax",%progbits
+ 1519              		.align	1
+ 1520              		.global	scan_files
+ 1521              		.syntax unified
+ 1522              		.thumb
+ 1523              		.thumb_func
+ 1524              		.fpu softvfp
+ 1526              	scan_files:
+ 1527              	.LVL159:
+ 1528              	.LFB82:
+ 413:Src/sdmm.c    **** FRESULT scan_files (
+ 414:Src/sdmm.c    ****     char* path        /* Start node to be scanned (***also used as work area***) */
+ 415:Src/sdmm.c    **** )
+ 416:Src/sdmm.c    **** {
+ 1529              		.loc 1 416 1 is_stmt 1 view -0
+ 1530              		.cfi_startproc
+ 1531              		@ args = 0, pretend = 0, frame = 0
+ 1532              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1533              		@ link register save eliminated.
+ 417:Src/sdmm.c    **** //    FRESULT res;
+ 418:Src/sdmm.c    **** //    DIR dir;
+ 419:Src/sdmm.c    **** //    UINT i;
+ 420:Src/sdmm.c    **** //    static FILINFO fno;
+ 421:Src/sdmm.c    **** //    char buf[50]={0};
+ 422:Src/sdmm.c    **** 
+ 423:Src/sdmm.c    **** //    res = f_opendir(&dir, path);                       /* Open the directory */
+ 424:Src/sdmm.c    **** //    if (res == FR_OK) {
+ 425:Src/sdmm.c    **** //        for (;;) {
+ 426:Src/sdmm.c    **** //            res = f_readdir(&dir, &fno);                   /* Read a directory item */
+ 427:Src/sdmm.c    **** //            if (res != FR_OK || fno.fname[0] == 0) break;  /* Break on error or end of dir */
+ 428:Src/sdmm.c    **** //            if (fno.fattrib & AM_DIR) {                    /* It is a directory */
+ 429:Src/sdmm.c    **** //                i = strlen(path);
+ 430:Src/sdmm.c    **** //                sprintf(&path[i], "/%s", fno.fname);
+ 431:Src/sdmm.c    **** //                res = scan_files(path);                    /* Enter the directory */
+ 432:Src/sdmm.c    **** //                if (res != FR_OK) break;
+ 433:Src/sdmm.c    **** //                path[i] = 0;
+ 434:Src/sdmm.c    **** //            } else {                                       /* It is a file. */
+ 435:Src/sdmm.c    **** //                sprintf(buf,"%s/%s\n", path, fno.fname);
+ 436:Src/sdmm.c    **** //                trace_puts(buf);
+ 437:Src/sdmm.c    **** //            }
+ 438:Src/sdmm.c    **** //        }
+ 439:Src/sdmm.c    **** //        f_closedir(&dir);
+ 440:Src/sdmm.c    **** //    }
+ 441:Src/sdmm.c    **** //    return res;
+ 442:Src/sdmm.c    **** }
+ 1534              		.loc 1 442 1 view .LVU411
+ 1535              	.LVL160:
+ 1536              		.loc 1 442 1 is_stmt 0 view .LVU412
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 39
+
+
+ 1537 0000 7047     		bx	lr
+ 1538              		.cfi_endproc
+ 1539              	.LFE82:
+ 1541              		.section	.text.set_timestamp,"ax",%progbits
+ 1542              		.align	1
+ 1543              		.global	set_timestamp
+ 1544              		.syntax unified
+ 1545              		.thumb
+ 1546              		.thumb_func
+ 1547              		.fpu softvfp
+ 1549              	set_timestamp:
+ 1550              	.LVL161:
+ 1551              	.LFB83:
+ 443:Src/sdmm.c    **** 
+ 444:Src/sdmm.c    **** FRESULT set_timestamp (
+ 445:Src/sdmm.c    ****     char *obj,     /* Pointer to the file name */
+ 446:Src/sdmm.c    ****     int year,
+ 447:Src/sdmm.c    ****     int month,
+ 448:Src/sdmm.c    ****     int mday,
+ 449:Src/sdmm.c    ****     int hour,
+ 450:Src/sdmm.c    ****     int min,
+ 451:Src/sdmm.c    ****     int sec
+ 452:Src/sdmm.c    **** )
+ 453:Src/sdmm.c    **** {
+ 1552              		.loc 1 453 1 is_stmt 1 view -0
+ 1553              		.cfi_startproc
+ 1554              		@ args = 12, pretend = 0, frame = 280
+ 1555              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1556              		.loc 1 453 1 is_stmt 0 view .LVU414
+ 1557 0000 00B5     		push	{lr}
+ 1558              	.LCFI35:
+ 1559              		.cfi_def_cfa_offset 4
+ 1560              		.cfi_offset 14, -4
+ 1561 0002 C7B0     		sub	sp, sp, #284
+ 1562              	.LCFI36:
+ 1563              		.cfi_def_cfa_offset 288
+ 454:Src/sdmm.c    ****     FILINFO fno;
+ 1564              		.loc 1 454 5 is_stmt 1 view .LVU415
+ 455:Src/sdmm.c    ****     fno.fdate = (WORD)(((year - 1980) * 512U) | month * 32U | mday);
+ 1565              		.loc 1 455 5 view .LVU416
+ 1566              		.loc 1 455 31 is_stmt 0 view .LVU417
+ 1567 0004 A1F2BC71 		subw	r1, r1, #1980
+ 1568              	.LVL162:
+ 1569              		.loc 1 455 47 view .LVU418
+ 1570 0008 5201     		lsls	r2, r2, #5
+ 1571              	.LVL163:
+ 1572              		.loc 1 455 47 view .LVU419
+ 1573 000a 42EA4122 		orr	r2, r2, r1, lsl #9
+ 1574 000e 92B2     		uxth	r2, r2
+ 1575              		.loc 1 455 17 view .LVU420
+ 1576 0010 1A43     		orrs	r2, r2, r3
+ 1577              		.loc 1 455 15 view .LVU421
+ 1578 0012 ADF80420 		strh	r2, [sp, #4]	@ movhi
+ 456:Src/sdmm.c    ****     fno.ftime = (WORD)(hour * 2048U | min * 32U | sec / 2U);
+ 1579              		.loc 1 456 5 is_stmt 1 view .LVU422
+ 1580              		.loc 1 456 37 is_stmt 0 view .LVU423
+ 1581 0016 499B     		ldr	r3, [sp, #292]
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 40
+
+
+ 1582              	.LVL164:
+ 1583              		.loc 1 456 37 view .LVU424
+ 1584 0018 5B01     		lsls	r3, r3, #5
+ 1585 001a 489A     		ldr	r2, [sp, #288]
+ 1586 001c 43EAC223 		orr	r3, r3, r2, lsl #11
+ 1587 0020 9BB2     		uxth	r3, r3
+ 1588              		.loc 1 456 17 view .LVU425
+ 1589 0022 4A9A     		ldr	r2, [sp, #296]
+ 1590 0024 43EA5203 		orr	r3, r3, r2, lsr #1
+ 1591              		.loc 1 456 15 view .LVU426
+ 1592 0028 ADF80630 		strh	r3, [sp, #6]	@ movhi
+ 457:Src/sdmm.c    ****     return f_utime(obj, &fno);
+ 1593              		.loc 1 457 5 is_stmt 1 view .LVU427
+ 1594              		.loc 1 457 12 is_stmt 0 view .LVU428
+ 1595 002c 6946     		mov	r1, sp
+ 1596              	.LVL165:
+ 1597              		.loc 1 457 12 view .LVU429
+ 1598 002e FFF7FEFF 		bl	f_utime
+ 1599              	.LVL166:
+ 458:Src/sdmm.c    **** }
+ 1600              		.loc 1 458 1 view .LVU430
+ 1601 0032 47B0     		add	sp, sp, #284
+ 1602              	.LCFI37:
+ 1603              		.cfi_def_cfa_offset 4
+ 1604              		@ sp needed
+ 1605 0034 5DF804FB 		ldr	pc, [sp], #4
+ 1606              		.loc 1 458 1 view .LVU431
+ 1607              		.cfi_endproc
+ 1608              	.LFE83:
+ 1610              		.section	.text.create_directory,"ax",%progbits
+ 1611              		.align	1
+ 1612              		.global	create_directory
+ 1613              		.syntax unified
+ 1614              		.thumb
+ 1615              		.thumb_func
+ 1616              		.fpu softvfp
+ 1618              	create_directory:
+ 1619              	.LVL167:
+ 1620              	.LFB84:
+ 459:Src/sdmm.c    **** FRESULT	create_directory(char *directory){
+ 1621              		.loc 1 459 42 is_stmt 1 view -0
+ 1622              		.cfi_startproc
+ 1623              		@ args = 0, pretend = 0, frame = 0
+ 1624              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1625              		@ link register save eliminated.
+ 460:Src/sdmm.c    **** 		FRESULT	fr;
+ 1626              		.loc 1 460 3 view .LVU433
+ 461:Src/sdmm.c    **** 		// FILINFO fno;
+ 462:Src/sdmm.c    **** 		// 	char dir[128]={0}; 
+ 463:Src/sdmm.c    **** 		// sprintf(dir,"//%s",directory);
+ 464:Src/sdmm.c    **** 		// i = strlen(dir);
+ 465:Src/sdmm.c    **** 		// fr = f_stat(dir, &fno);	//Check Directory Exist
+ 466:Src/sdmm.c    **** 		// if (fr == FR_OK){
+ 467:Src/sdmm.c    **** 		// 	printf("Directory Exist. Don't Create Directory\n");
+ 468:Src/sdmm.c    **** 		// 	return FR_EXIST;
+ 469:Src/sdmm.c    **** 		// }
+ 470:Src/sdmm.c    **** 		// else {
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 41
+
+
+ 471:Src/sdmm.c    **** 		// 	printf("log: Directory No Exist. Create Directory");
+ 472:Src/sdmm.c    **** 		// 	fr = f_mkdir(directory);
+ 473:Src/sdmm.c    **** 		// 	if(fr == FR_OK)printf(" => create OK\n");
+ 474:Src/sdmm.c    **** 		// 	else	printf(" => create ERROR\n");
+ 475:Src/sdmm.c    **** 		return fr;
+ 1627              		.loc 1 475 3 view .LVU434
+ 476:Src/sdmm.c    **** 		// }
+ 477:Src/sdmm.c    **** }
+ 1628              		.loc 1 477 1 is_stmt 0 view .LVU435
+ 1629 0000 0020     		movs	r0, #0
+ 1630              	.LVL168:
+ 1631              		.loc 1 477 1 view .LVU436
+ 1632 0002 7047     		bx	lr
+ 1633              		.cfi_endproc
+ 1634              	.LFE84:
+ 1636              		.section	.rodata.write2file.str1.4,"aMS",%progbits,1
+ 1637              		.align	2
+ 1638              	.LC0:
+ 1639 0000 44697220 		.ascii	"Dir = %s\012\000"
+ 1639      3D202573 
+ 1639      0A00
+ 1640              		.section	.text.write2file,"ax",%progbits
+ 1641              		.align	1
+ 1642              		.global	write2file
+ 1643              		.syntax unified
+ 1644              		.thumb
+ 1645              		.thumb_func
+ 1646              		.fpu softvfp
+ 1648              	write2file:
+ 1649              	.LVL169:
+ 1650              	.LFB85:
+ 478:Src/sdmm.c    **** FRESULT write2file(char *filename, char *content, int content_len)
+ 479:Src/sdmm.c    **** {
+ 1651              		.loc 1 479 1 is_stmt 1 view -0
+ 1652              		.cfi_startproc
+ 1653              		@ args = 0, pretend = 0, frame = 560
+ 1654              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1655              		.loc 1 479 1 is_stmt 0 view .LVU438
+ 1656 0000 70B5     		push	{r4, r5, r6, lr}
+ 1657              	.LCFI38:
+ 1658              		.cfi_def_cfa_offset 16
+ 1659              		.cfi_offset 4, -16
+ 1660              		.cfi_offset 5, -12
+ 1661              		.cfi_offset 6, -8
+ 1662              		.cfi_offset 14, -4
+ 1663 0002 ADF50C7D 		sub	sp, sp, #560
+ 1664              	.LCFI39:
+ 1665              		.cfi_def_cfa_offset 576
+ 1666 0006 0446     		mov	r4, r0
+ 1667 0008 0D46     		mov	r5, r1
+ 1668 000a 1646     		mov	r6, r2
+ 480:Src/sdmm.c    **** 	FRESULT fr;
+ 1669              		.loc 1 480 2 is_stmt 1 view .LVU439
+ 481:Src/sdmm.c    **** 	UINT	bw;
+ 1670              		.loc 1 481 2 view .LVU440
+ 482:Src/sdmm.c    **** 	FIL	Fil;
+ 1671              		.loc 1 482 2 view .LVU441
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 42
+
+
+ 483:Src/sdmm.c    **** 	// char directory_buffer[128]={0};
+ 484:Src/sdmm.c    **** //	memcpy(directory_buffer,directory,dir_len);
+ 485:Src/sdmm.c    **** 	// sprintf(directory_buffer,"/%s",filename);
+ 486:Src/sdmm.c    **** 	printf("Dir = %s\n",filename);
+ 1672              		.loc 1 486 2 view .LVU442
+ 1673 000c 0146     		mov	r1, r0
+ 1674              	.LVL170:
+ 1675              		.loc 1 486 2 is_stmt 0 view .LVU443
+ 1676 000e 0B48     		ldr	r0, .L140
+ 1677              	.LVL171:
+ 1678              		.loc 1 486 2 view .LVU444
+ 1679 0010 FFF7FEFF 		bl	printf
+ 1680              	.LVL172:
+ 487:Src/sdmm.c    **** 	fr = f_open(&Fil, filename, FA_WRITE|FA_OPEN_APPEND);
+ 1681              		.loc 1 487 2 is_stmt 1 view .LVU445
+ 1682              		.loc 1 487 7 is_stmt 0 view .LVU446
+ 1683 0014 3222     		movs	r2, #50
+ 1684 0016 2146     		mov	r1, r4
+ 1685 0018 01A8     		add	r0, sp, #4
+ 1686 001a FFF7FEFF 		bl	f_open
+ 1687              	.LVL173:
+ 488:Src/sdmm.c    **** 	if (fr == FR_OK) {
+ 1688              		.loc 1 488 2 is_stmt 1 view .LVU447
+ 1689              		.loc 1 488 5 is_stmt 0 view .LVU448
+ 1690 001e 10B1     		cbz	r0, .L139
+ 1691              	.L137:
+ 1692              	.LVL174:
+ 489:Src/sdmm.c    **** 		f_write(&Fil,content,content_len, &bw);	/* Write data to the file */
+ 490:Src/sdmm.c    **** 		// f_printf()
+ 491:Src/sdmm.c    **** 		fr = f_close(&Fil);
+ 492:Src/sdmm.c    **** 	}
+ 493:Src/sdmm.c    **** 	return fr;
+ 1693              		.loc 1 493 2 is_stmt 1 view .LVU449
+ 494:Src/sdmm.c    **** }
+ 1694              		.loc 1 494 1 is_stmt 0 view .LVU450
+ 1695 0020 0DF50C7D 		add	sp, sp, #560
+ 1696              	.LCFI40:
+ 1697              		.cfi_remember_state
+ 1698              		.cfi_def_cfa_offset 16
+ 1699              		@ sp needed
+ 1700 0024 70BD     		pop	{r4, r5, r6, pc}
+ 1701              	.LVL175:
+ 1702              	.L139:
+ 1703              	.LCFI41:
+ 1704              		.cfi_restore_state
+ 489:Src/sdmm.c    **** 		f_write(&Fil,content,content_len, &bw);	/* Write data to the file */
+ 1705              		.loc 1 489 3 is_stmt 1 view .LVU451
+ 1706 0026 8BAB     		add	r3, sp, #556
+ 1707 0028 3246     		mov	r2, r6
+ 1708 002a 2946     		mov	r1, r5
+ 1709 002c 01A8     		add	r0, sp, #4
+ 1710 002e FFF7FEFF 		bl	f_write
+ 1711              	.LVL176:
+ 491:Src/sdmm.c    **** 	}
+ 1712              		.loc 1 491 3 view .LVU452
+ 491:Src/sdmm.c    **** 	}
+ 1713              		.loc 1 491 8 is_stmt 0 view .LVU453
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 43
+
+
+ 1714 0032 01A8     		add	r0, sp, #4
+ 1715 0034 FFF7FEFF 		bl	f_close
+ 1716              	.LVL177:
+ 491:Src/sdmm.c    **** 	}
+ 1717              		.loc 1 491 8 view .LVU454
+ 1718 0038 F2E7     		b	.L137
+ 1719              	.L141:
+ 1720 003a 00BF     		.align	2
+ 1721              	.L140:
+ 1722 003c 00000000 		.word	.LC0
+ 1723              		.cfi_endproc
+ 1724              	.LFE85:
+ 1726              		.section	.bss.CardType,"aw",%nobits
+ 1727              		.set	.LANCHOR1,. + 0
+ 1730              	CardType:
+ 1731 0000 00       		.space	1
+ 1732              		.section	.data.Stat,"aw"
+ 1733              		.set	.LANCHOR0,. + 0
+ 1736              	Stat:
+ 1737 0000 01       		.byte	1
+ 1738              		.text
+ 1739              	.Letext0:
+ 1740              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+ 1741              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 1742              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h"
+ 1743              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 1744              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 1745              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h"
+ 1746              		.file 8 "Inc/ff.h"
+ 1747              		.file 9 "Inc/diskio.h"
+ 1748              		.file 10 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\stdio.h"
+ 1749              		.file 11 "Inc/spi.h"
+ 1750              		.file 12 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 1751              		.file 13 "Inc/delay.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 44
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 sdmm.c
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:16     .text.rcvr_mmc:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:23     .text.rcvr_mmc:00000000 rcvr_mmc
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:68     .text.rcvr_mmc:00000018 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:73     .text.xmit_mmc:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:79     .text.xmit_mmc:00000000 xmit_mmc
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:122    .text.xmit_mmc:00000018 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:127    .text.dly_us:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:133    .text.dly_us:00000000 dly_us
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:155    .text.wait_ready:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:161    .text.wait_ready:00000000 wait_ready
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:223    .text.xmit_datablock:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:229    .text.xmit_datablock:00000000 xmit_datablock
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:316    .text.rcvr_datablock:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:322    .text.rcvr_datablock:00000000 rcvr_datablock
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:413    .text.deselect:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:419    .text.deselect:00000000 deselect
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:453    .text.deselect:00000020 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:458    .text.SD_select:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:464    .text.SD_select:00000000 SD_select
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:520    .text.SD_select:00000030 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:525    .text.send_cmd:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:531    .text.send_cmd:00000000 send_cmd
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:703    .text.disk_status:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:710    .text.disk_status:00000000 disk_status
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:738    .text.disk_status:0000000c $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:743    .text.disk_initialize:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:750    .text.disk_initialize:00000000 disk_initialize
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1019   .text.disk_initialize:00000114 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1027   .text.disk_read:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1034   .text.disk_read:00000000 disk_read
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1151   .text.disk_read:00000064 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1156   .text.disk_write:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1163   .text.disk_write:00000000 disk_write
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1307   .text.disk_write:00000088 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1312   .text.disk_ioctl:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1319   .text.disk_ioctl:00000000 disk_ioctl
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1519   .text.scan_files:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1526   .text.scan_files:00000000 scan_files
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1542   .text.set_timestamp:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1549   .text.set_timestamp:00000000 set_timestamp
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1611   .text.create_directory:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1618   .text.create_directory:00000000 create_directory
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1637   .rodata.write2file.str1.4:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1641   .text.write2file:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1648   .text.write2file:00000000 write2file
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1722   .text.write2file:0000003c $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1730   .bss.CardType:00000000 CardType
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1731   .bss.CardType:00000000 $d
+C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s:1736   .data.Stat:00000000 Stat
+
+UNDEFINED SYMBOLS
+spi_tx_byte
+hspi1
+delay_us
+HAL_GPIO_WritePin
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccw9rGgV.s 			page 45
+
+
+spi_init
+f_utime
+printf
+f_open
+f_write
+f_close

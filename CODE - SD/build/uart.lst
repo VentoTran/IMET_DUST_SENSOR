@@ -1,0 +1,317 @@
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"uart.c"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text.UART2_putChar,"ax",%progbits
+  16              		.align	1
+  17              		.global	UART2_putChar
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	UART2_putChar:
+  25              	.LVL0:
+  26              	.LFB68:
+  27              		.file 1 "Src/uart.c"
+   1:Src/uart.c    **** #include "uart.h"
+   2:Src/uart.c    **** #include <string.h>
+   3:Src/uart.c    **** #include <stdlib.h>
+   4:Src/uart.c    **** #include <stdint.h>
+   5:Src/uart.c    **** #include "main.h"
+   6:Src/uart.c    **** extern UART_HandleTypeDef huart1;
+   7:Src/uart.c    **** extern UART_HandleTypeDef huart2;
+   8:Src/uart.c    **** extern UART_HandleTypeDef huart3;
+   9:Src/uart.c    **** //extern UART_HandleTypeDef huart5;
+  10:Src/uart.c    **** void UART2_putChar(unsigned char _data)
+  11:Src/uart.c    **** {
+  28              		.loc 1 11 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 11 1 is_stmt 0 view .LVU1
+  33 0000 00B5     		push	{lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 14, -4
+  37 0002 83B0     		sub	sp, sp, #12
+  38              	.LCFI1:
+  39              		.cfi_def_cfa_offset 16
+  12:Src/uart.c    **** 	uint8_t dat[1]= {_data};
+  40              		.loc 1 12 2 is_stmt 1 view .LVU2
+  41              		.loc 1 12 10 is_stmt 0 view .LVU3
+  42 0004 8DF80400 		strb	r0, [sp, #4]
+  13:Src/uart.c    ****   HAL_UART_Transmit(&huart2,dat,1,10);
+  43              		.loc 1 13 3 is_stmt 1 view .LVU4
+  44 0008 0A23     		movs	r3, #10
+  45 000a 0122     		movs	r2, #1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s 			page 2
+
+
+  46 000c 01A9     		add	r1, sp, #4
+  47 000e 0348     		ldr	r0, .L3
+  48              	.LVL1:
+  49              		.loc 1 13 3 is_stmt 0 view .LVU5
+  50 0010 FFF7FEFF 		bl	HAL_UART_Transmit
+  51              	.LVL2:
+  14:Src/uart.c    **** }
+  52              		.loc 1 14 1 view .LVU6
+  53 0014 03B0     		add	sp, sp, #12
+  54              	.LCFI2:
+  55              		.cfi_def_cfa_offset 4
+  56              		@ sp needed
+  57 0016 5DF804FB 		ldr	pc, [sp], #4
+  58              	.L4:
+  59 001a 00BF     		.align	2
+  60              	.L3:
+  61 001c 00000000 		.word	huart2
+  62              		.cfi_endproc
+  63              	.LFE68:
+  65              		.section	.text.UART2_putString,"ax",%progbits
+  66              		.align	1
+  67              		.global	UART2_putString
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  71              		.fpu softvfp
+  73              	UART2_putString:
+  74              	.LVL3:
+  75              	.LFB69:
+  15:Src/uart.c    **** void UART2_putString(char *strx)
+  16:Src/uart.c    **** {
+  76              		.loc 1 16 1 is_stmt 1 view -0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              		.loc 1 16 1 is_stmt 0 view .LVU8
+  81 0000 10B5     		push	{r4, lr}
+  82              	.LCFI3:
+  83              		.cfi_def_cfa_offset 8
+  84              		.cfi_offset 4, -8
+  85              		.cfi_offset 14, -4
+  86 0002 0446     		mov	r4, r0
+  17:Src/uart.c    ****   HAL_UART_Transmit(&huart2,(uint8_t *)strx, strlen(strx),200);
+  87              		.loc 1 17 3 is_stmt 1 view .LVU9
+  88              		.loc 1 17 46 is_stmt 0 view .LVU10
+  89 0004 FFF7FEFF 		bl	strlen
+  90              	.LVL4:
+  91              		.loc 1 17 3 view .LVU11
+  92 0008 C823     		movs	r3, #200
+  93 000a 82B2     		uxth	r2, r0
+  94 000c 2146     		mov	r1, r4
+  95 000e 0248     		ldr	r0, .L7
+  96 0010 FFF7FEFF 		bl	HAL_UART_Transmit
+  97              	.LVL5:
+  18:Src/uart.c    **** }
+  98              		.loc 1 18 1 view .LVU12
+  99 0014 10BD     		pop	{r4, pc}
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s 			page 3
+
+
+ 100              	.LVL6:
+ 101              	.L8:
+ 102              		.loc 1 18 1 view .LVU13
+ 103 0016 00BF     		.align	2
+ 104              	.L7:
+ 105 0018 00000000 		.word	huart2
+ 106              		.cfi_endproc
+ 107              	.LFE69:
+ 109              		.section	.text.RS485_putString,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	RS485_putString
+ 112              		.syntax unified
+ 113              		.thumb
+ 114              		.thumb_func
+ 115              		.fpu softvfp
+ 117              	RS485_putString:
+ 118              	.LVL7:
+ 119              	.LFB70:
+  19:Src/uart.c    **** 
+  20:Src/uart.c    **** void RS485_putString(char *strx)
+  21:Src/uart.c    **** {
+ 120              		.loc 1 21 1 is_stmt 1 view -0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 0
+ 123              		@ frame_needed = 0, uses_anonymous_args = 0
+ 124              		.loc 1 21 1 is_stmt 0 view .LVU15
+ 125 0000 10B5     		push	{r4, lr}
+ 126              	.LCFI4:
+ 127              		.cfi_def_cfa_offset 8
+ 128              		.cfi_offset 4, -8
+ 129              		.cfi_offset 14, -4
+ 130 0002 0446     		mov	r4, r0
+  22:Src/uart.c    ****   HAL_UART_Transmit(&huart1,(uint8_t *)strx,strlen(strx),200);
+ 131              		.loc 1 22 3 is_stmt 1 view .LVU16
+ 132              		.loc 1 22 45 is_stmt 0 view .LVU17
+ 133 0004 FFF7FEFF 		bl	strlen
+ 134              	.LVL8:
+ 135              		.loc 1 22 3 view .LVU18
+ 136 0008 C823     		movs	r3, #200
+ 137 000a 82B2     		uxth	r2, r0
+ 138 000c 2146     		mov	r1, r4
+ 139 000e 0248     		ldr	r0, .L11
+ 140 0010 FFF7FEFF 		bl	HAL_UART_Transmit
+ 141              	.LVL9:
+  23:Src/uart.c    **** }
+ 142              		.loc 1 23 1 view .LVU19
+ 143 0014 10BD     		pop	{r4, pc}
+ 144              	.LVL10:
+ 145              	.L12:
+ 146              		.loc 1 23 1 view .LVU20
+ 147 0016 00BF     		.align	2
+ 148              	.L11:
+ 149 0018 00000000 		.word	huart1
+ 150              		.cfi_endproc
+ 151              	.LFE70:
+ 153              		.section	.text.UART_putCharPC,"ax",%progbits
+ 154              		.align	1
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s 			page 4
+
+
+ 155              		.global	UART_putCharPC
+ 156              		.syntax unified
+ 157              		.thumb
+ 158              		.thumb_func
+ 159              		.fpu softvfp
+ 161              	UART_putCharPC:
+ 162              	.LVL11:
+ 163              	.LFB71:
+  24:Src/uart.c    **** void UART_putCharPC(unsigned char _data)
+  25:Src/uart.c    **** {
+ 164              		.loc 1 25 1 is_stmt 1 view -0
+ 165              		.cfi_startproc
+ 166              		@ args = 0, pretend = 0, frame = 8
+ 167              		@ frame_needed = 0, uses_anonymous_args = 0
+ 168              		.loc 1 25 1 is_stmt 0 view .LVU22
+ 169 0000 00B5     		push	{lr}
+ 170              	.LCFI5:
+ 171              		.cfi_def_cfa_offset 4
+ 172              		.cfi_offset 14, -4
+ 173 0002 83B0     		sub	sp, sp, #12
+ 174              	.LCFI6:
+ 175              		.cfi_def_cfa_offset 16
+  26:Src/uart.c    **** 	uint8_t dat[1]= {_data};
+ 176              		.loc 1 26 2 is_stmt 1 view .LVU23
+ 177              		.loc 1 26 10 is_stmt 0 view .LVU24
+ 178 0004 8DF80400 		strb	r0, [sp, #4]
+  27:Src/uart.c    ****   HAL_UART_Transmit(&huart3,dat,1,10);
+ 179              		.loc 1 27 3 is_stmt 1 view .LVU25
+ 180 0008 0A23     		movs	r3, #10
+ 181 000a 0122     		movs	r2, #1
+ 182 000c 01A9     		add	r1, sp, #4
+ 183 000e 0348     		ldr	r0, .L15
+ 184              	.LVL12:
+ 185              		.loc 1 27 3 is_stmt 0 view .LVU26
+ 186 0010 FFF7FEFF 		bl	HAL_UART_Transmit
+ 187              	.LVL13:
+  28:Src/uart.c    **** }
+ 188              		.loc 1 28 1 view .LVU27
+ 189 0014 03B0     		add	sp, sp, #12
+ 190              	.LCFI7:
+ 191              		.cfi_def_cfa_offset 4
+ 192              		@ sp needed
+ 193 0016 5DF804FB 		ldr	pc, [sp], #4
+ 194              	.L16:
+ 195 001a 00BF     		.align	2
+ 196              	.L15:
+ 197 001c 00000000 		.word	huart3
+ 198              		.cfi_endproc
+ 199              	.LFE71:
+ 201              		.section	.text.UART_putStringPC,"ax",%progbits
+ 202              		.align	1
+ 203              		.global	UART_putStringPC
+ 204              		.syntax unified
+ 205              		.thumb
+ 206              		.thumb_func
+ 207              		.fpu softvfp
+ 209              	UART_putStringPC:
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s 			page 5
+
+
+ 210              	.LVL14:
+ 211              	.LFB72:
+  29:Src/uart.c    **** void UART_putStringPC(char *strx)
+  30:Src/uart.c    **** {
+ 212              		.loc 1 30 1 is_stmt 1 view -0
+ 213              		.cfi_startproc
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216              		.loc 1 30 1 is_stmt 0 view .LVU29
+ 217 0000 10B5     		push	{r4, lr}
+ 218              	.LCFI8:
+ 219              		.cfi_def_cfa_offset 8
+ 220              		.cfi_offset 4, -8
+ 221              		.cfi_offset 14, -4
+ 222 0002 0446     		mov	r4, r0
+  31:Src/uart.c    ****   HAL_UART_Transmit(&huart3,(uint8_t *)strx,strlen(strx),200);
+ 223              		.loc 1 31 3 is_stmt 1 view .LVU30
+ 224              		.loc 1 31 45 is_stmt 0 view .LVU31
+ 225 0004 FFF7FEFF 		bl	strlen
+ 226              	.LVL15:
+ 227              		.loc 1 31 3 view .LVU32
+ 228 0008 C823     		movs	r3, #200
+ 229 000a 82B2     		uxth	r2, r0
+ 230 000c 2146     		mov	r1, r4
+ 231 000e 0248     		ldr	r0, .L19
+ 232 0010 FFF7FEFF 		bl	HAL_UART_Transmit
+ 233              	.LVL16:
+  32:Src/uart.c    **** }
+ 234              		.loc 1 32 1 view .LVU33
+ 235 0014 10BD     		pop	{r4, pc}
+ 236              	.LVL17:
+ 237              	.L20:
+ 238              		.loc 1 32 1 view .LVU34
+ 239 0016 00BF     		.align	2
+ 240              	.L19:
+ 241 0018 00000000 		.word	huart3
+ 242              		.cfi_endproc
+ 243              	.LFE72:
+ 245              		.text
+ 246              	.Letext0:
+ 247              		.file 2 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\machine\\_default_type
+ 248              		.file 3 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 249              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h"
+ 250              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 251              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 252              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 253              		.file 8 "d:\\tools\\gcc-arm-none-eabi-10.3-2021.07\\arm-none-eabi\\include\\string.h"
+ARM GAS  C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 uart.c
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:16     .text.UART2_putChar:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:24     .text.UART2_putChar:00000000 UART2_putChar
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:61     .text.UART2_putChar:0000001c $d
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:66     .text.UART2_putString:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:73     .text.UART2_putString:00000000 UART2_putString
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:105    .text.UART2_putString:00000018 $d
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:110    .text.RS485_putString:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:117    .text.RS485_putString:00000000 RS485_putString
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:149    .text.RS485_putString:00000018 $d
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:154    .text.UART_putCharPC:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:161    .text.UART_putCharPC:00000000 UART_putCharPC
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:197    .text.UART_putCharPC:0000001c $d
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:202    .text.UART_putStringPC:00000000 $t
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:209    .text.UART_putStringPC:00000000 UART_putStringPC
+C:\Users\Vento\AppData\Local\Temp\ccF91GJv.s:241    .text.UART_putStringPC:00000018 $d
+
+UNDEFINED SYMBOLS
+HAL_UART_Transmit
+huart2
+strlen
+huart1
+huart3
